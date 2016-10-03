@@ -41,4 +41,4 @@ WORKDIR /usr/src/app
 
 COPY . /usr/src/app
 
-RUN lein run
+CMD lein run
