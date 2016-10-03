@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4a1ec84c-03d3-47b5-bea5-c5aeb75b010e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/replstate.xml" afterPath="$PROJECT_DIR$/.idea/replstate.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/handlers.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/handlers.cljs" />
     </list>
     <ignored path="micircle-new.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -85,11 +84,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="handlers.cljs" pinned="false" current-in-tab="false">
+      <file leaf-file-name="handlers.cljs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/cljs/micircle/handlers.cljs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1069">
-              <caret line="199" column="36" selection-start-line="199" selection-start-column="36" selection-end-line="199" selection-end-column="36" />
+            <state relative-caret-position="1345">
+              <caret line="139" column="46" selection-start-line="139" selection-start-column="46" selection-end-line="139" selection-end-column="46" />
               <folding />
             </state>
           </provider>
@@ -105,7 +104,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="92">
@@ -145,12 +144,12 @@
         <option value="$PROJECT_DIR$/src/cljs/micircle/views/links.cljs" />
         <option value="$PROJECT_DIR$/src/cljs/micircle/core.cljs" />
         <option value="$PROJECT_DIR$/src/cljs/micircle/subs.cljs" />
-        <option value="$PROJECT_DIR$/src/cljs/micircle/handlers.cljs" />
         <option value="$PROJECT_DIR$/src/cljs/micircle/views/entities.cljs" />
         <option value="$PROJECT_DIR$/src/cljs/micircle/views.cljs" />
         <option value="$PROJECT_DIR$/src/cljs/micircle/views/core.cljs" />
         <option value="$PROJECT_DIR$/less/site.less" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/src/cljs/micircle/handlers.cljs" />
       </list>
     </option>
   </component>
@@ -329,7 +328,7 @@
       <pane id="Scope" />
     </panes>
   </component>
-  <component name="ReplState" timestamp="1475509673305">{:repl-history {:ide [], :local [], :remote []}}</component>
+  <component name="ReplState" timestamp="1475509793333">{:repl-history {:ide [], :local [], :remote []}}</component>
   <component name="RunManager" selected="Clojure REPL.REPL for micircle">
     <configuration default="false" name="REPL for micircle" type="ClojureREPL" factoryName="Local" temporary="true">
       <setting name="replType" value="0" />
@@ -740,14 +739,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/handlers.cljs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1069">
-          <caret line="199" column="36" selection-start-line="199" selection-start-column="36" selection-end-line="199" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/project.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="48">
@@ -760,6 +751,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="92">
           <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/handlers.cljs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1345">
+          <caret line="139" column="46" selection-start-line="139" selection-start-column="46" selection-end-line="139" selection-end-column="46" />
           <folding />
         </state>
       </provider>

@@ -137,7 +137,7 @@
   (fn [{:keys [db]} [_ id label]]
     {:db         (assoc db :show-twirly true)
      :http-xhrio {:method          :get
-                  :uri             (str "http://www.uniprot.org/uniprot/?format=json&columns=length,id&query=accession:" id)
+                  :uri             (str "https://www.uniprot.org/uniprot/?format=json&columns=length,id&query=accession:" id)
                   :timeout         30000
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success      [:success-fetch-length id label]
@@ -148,7 +148,7 @@
   (fn [{:keys [db]} [_ id]]
     {:db         (assoc db :show-twirly true)
      :http-xhrio {:method          :get
-                  :uri             (str "http://www.ebi.ac.uk/intact/complex-ws/export/" id)
+                  :uri             (str "https://www.ebi.ac.uk/intact/complex-ws/export/" id)
                   :timeout         30000
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success      [:success-fetch-complex]
