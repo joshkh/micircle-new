@@ -2,25 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4a1ec84c-03d3-47b5-bea5-c5aeb75b010e" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/replstate.xml" afterPath="$PROJECT_DIR$/.idea/replstate.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/less/site.less" afterPath="$PROJECT_DIR$/less/site.less" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/micircle.iml" afterPath="$PROJECT_DIR$/micircle.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project.clj" afterPath="$PROJECT_DIR$/project.clj" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/public/css/site.css" afterPath="$PROJECT_DIR$/resources/public/css/site.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/public/index.html" afterPath="$PROJECT_DIR$/resources/public/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/core.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/core.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/db.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/db.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/handlers.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/handlers.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/math.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/math.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/subs.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/subs.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/views.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/views.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/views/core.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/views/core.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/views/entities.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/views/entities.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/views/links.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/views/links.cljs" />
     </list>
     <ignored path="micircle-new.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -124,8 +108,8 @@
       <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="115">
-              <caret line="5" column="5" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="5" />
+            <state relative-caret-position="92">
+              <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
               <folding />
             </state>
           </provider>
@@ -345,7 +329,7 @@
       <pane id="Scope" />
     </panes>
   </component>
-  <component name="ReplState" timestamp="1475509141239">{:repl-history {:ide [], :local [], :remote []}}</component>
+  <component name="ReplState" timestamp="1475509673305">{:repl-history {:ide [], :local [], :remote []}}</component>
   <component name="RunManager" selected="Clojure REPL.REPL for micircle">
     <configuration default="false" name="REPL for micircle" type="ClojureREPL" factoryName="Local" temporary="true">
       <setting name="replType" value="0" />
@@ -774,8 +758,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="115">
-          <caret line="5" column="5" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="5" />
+        <state relative-caret-position="92">
+          <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
           <folding />
         </state>
       </provider>
