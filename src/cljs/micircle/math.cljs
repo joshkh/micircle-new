@@ -32,26 +32,46 @@
 
 
 (defn describe-link-new
-  [{:keys [center-x center-y radius start-angle-1 start-angle-2 end-angle-1 end-angle-2]}]
-  (let [start-1        (polar-to-cartesian center-x center-y radius start-angle-1)
-        start-2        (polar-to-cartesian center-x center-y radius start-angle-2)
-        end-1          (polar-to-cartesian center-x center-y radius end-angle-1)
-        end-2          (polar-to-cartesian center-x center-y radius end-angle-2)
-        anchor-1       (polar-to-cartesian center-x center-y (- radius 50) (- start-angle-1 10))
-        anchor-2       (polar-to-cartesian center-x center-y (- radius 50) (- start-angle-2 10))
-        ;end-inner            (polar-to-cartesian center-x center-y radius start-angle)
-        large-arc-flag (if (<= (- end-angle-1 start-angle-1) 180) 0 1)]
+  [{:keys [center-x center-y radius start-angle-1 start-angle-2 end-angle-1 end-angle-2]} & [options]]
+  (let [
+        pinch-percent        (js/parseFloat (:pinch-percent options))
+        pinch-depth          (js/parseInt (:pinch-depth options))
+        ptc                  (partial polar-to-cartesian center-x center-y)
+
+        start-1              (ptc radius start-angle-1)
+        start-2              (ptc radius start-angle-2)
+        end-1                (ptc radius end-angle-1)
+        end-2                (ptc radius end-angle-2)
+
+        anchor-start-2       (ptc (- radius pinch-depth) (- start-angle-2 (* pinch-percent (- start-angle-2 start-angle-1))))
+        outer-handle-start-2 (ptc (- radius (/ pinch-depth 4)) (- start-angle-2 0))
+        inner-handle-start-2 (ptc (- radius (/ pinch-depth 4)) (- start-angle-2 (* pinch-percent (- start-angle-2 start-angle-1))))
+
+        anchor-end-1         (ptc (- radius pinch-depth) (+ end-angle-1 (* pinch-percent (- end-angle-2 end-angle-1))))
+        outer-handle-end-1   (ptc (- radius (/ pinch-depth 4)) (+ end-angle-1 0))
+        inner-handle-end-1   (ptc (- radius (/ pinch-depth 4)) (+ end-angle-1 (* pinch-percent (- end-angle-2 end-angle-1))))
+
+        anchor-end-2         (ptc (- radius pinch-depth) (- end-angle-2 (* pinch-percent (- end-angle-2 end-angle-1))))
+        outer-handle-end-2   (ptc (- radius (/ pinch-depth 4)) (- end-angle-2 0))
+        inner-handle-end-2   (ptc (- radius (/ pinch-depth 4)) (- end-angle-2 (* pinch-percent (- end-angle-2 end-angle-1))))
+
+        anchor-start-1       (ptc (- radius pinch-depth) (+ start-angle-1 (* pinch-percent (- start-angle-2 start-angle-1))))
+        outer-handle-start-1 (ptc (- radius (/ pinch-depth 4)) (+ start-angle-1 0))
+        inner-handle-start-1 (ptc (- radius (/ pinch-depth 4)) (+ start-angle-1 (* pinch-percent (- start-angle-2 start-angle-1))))
+
+
+
+        large-arc-flag       (if (<= (- end-angle-1 start-angle-1) 180) 0 1)]
     (clojure.string/join " " ["M" (:x start-1) (:y start-1)
-                              ;"L" 100 100
                               "A" radius radius 0 large-arc-flag 1 (:x start-2) (:y start-2)
-                              "C" (:x anchor-2) (:y anchor-2) (:x anchor-2) (:y anchor-2) (:x anchor-2) (:y anchor-2)
-                              "Q" 150 150 (:x end-1) (:y end-1)
+                              "C" (:x outer-handle-start-2) (:y outer-handle-start-2) (:x inner-handle-start-2) (:y inner-handle-start-2) (:x anchor-start-2) (:y anchor-start-2)
+                              "Q" 250 250 (:x anchor-end-1) (:y anchor-end-1)
+                              "C" (:x inner-handle-end-1) (:y inner-handle-end-1) (:x outer-handle-end-1) (:y outer-handle-end-1) (:x end-1) (:y end-1)
                               "A" radius radius 0 large-arc-flag 1 (:x end-2) (:y end-2)
-                              "Q" 150 150 (:x start-1) (:y start-1)
-
-
-                              ;"A" radius radius 0 large-arc-flag 0 (:x end-inner) (:y end-inner)
-                              ])))
+                              "C" (:x outer-handle-end-2) (:y outer-handle-end-2) (:x inner-handle-end-2) (:y inner-handle-end-2) (:x anchor-end-2) (:y anchor-end-2)
+                              "Q" 250 250 (:x anchor-start-1) (:y anchor-start-1)
+                              "C" (:x inner-handle-start-1) (:y inner-handle-start-1) (:x outer-handle-start-1) (:y outer-handle-start-1) (:x start-1) (:y start-1)
+                              "Z"])))
 
 (defn describe-arc
   [x y radius start-angle end-angle & [thickness]]
@@ -66,6 +86,14 @@
                               "L" (:x end-outer) (:y end-outer)
                               "A" (+ thickness radius) (+ thickness radius) 0 large-arc-flag 1 (:x start-outer) (:y start-outer)
                               "Z"])))
+
+(defn describe-tick
+  [x y radius angle & [thickness]]
+  (let [thickness      (if thickness thickness 10)
+        start          (polar-to-cartesian x y radius angle)
+        end            (polar-to-cartesian x y (+ radius 5) angle)]
+    (clojure.string/join " " ["M" (:x start) (:y start)
+                              "L" (:x end) (:y end)])))
 
 
 

@@ -1,21 +1,22 @@
 (ns micircle.views
-    (:require [re-frame.core :as re-frame]
-              [micircle.views.core :as main]
-              [json-html.core :as json-html]))
+  (:require [re-frame.core :as re-frame]
+            [micircle.views.core :as main]
+            [json-html.core :as json-html]))
 
 
 ;; home
 
 (defn home-panel []
-  (let [name (re-frame/subscribe [:name])
+  (let [name   (re-frame/subscribe [:name])
         app-db (re-frame/subscribe [:app-db])]
     (fn []
       [:div
        [main/main]
-       [:div (json-html/edn->hiccup (select-keys @app-db [:views :feature-map :link-views]))]]
+       ;[:div (json-html/edn->hiccup (select-keys @app-db [:views :feature-map :link-views]))]
+       ]
       #_[:div (str "Hello from " @name ". This is the Home Page.")
-       [:div [:a {:href "#/about"} "go to About Page"]]
-       [main/main]])))
+         [:div [:a {:href "#/about"} "go to About Page"]]
+         [main/main]])))
 
 
 ;; about

@@ -40,7 +40,7 @@
                                                                    :id            (keyword (:id p))
                                                                    :length        p-length
                                                                    :start-angle   (scale-fn total)
-                                                                   :end-angle     (- (scale-fn (+ total p-length)) 4)})))
+                                                                   :end-angle     (- (scale-fn (+ total p-length)) 10)})))
                                    {}
                                    (participants (:data db))))
        :dispatch [:shape-links]})))
@@ -53,9 +53,9 @@
     (let [percent (/ input (- upper-domain lower-domain))]
       (+ lower-range (* percent (- upper-range lower-range))))))
 
-(reg-event-db
+(reg-event-fx
   :shape-links
-  (fn [db]
+  (fn [{db :db}]
     (let [entity-views (get-in db [:views :entities])
           feature-map  (reduce (fn [total [participant-id next]]
                                  (assoc total (keyword (:id next)) (assoc next :participant-id (keyword participant-id))))
@@ -67,25 +67,55 @@
                                from-participant-view (participant-id entity-views)
                                to-participant-view   (get entity-views (get-in feature-map [(-> linkedFeatures first keyword) :participant-id]))]
 
-                           {:start-angle-1 ((radial-scale
-                                              [0 (:length from-participant-view)]
-                                              [(:start-angle from-participant-view) (:end-angle from-participant-view)])
-                                             from-pos-1)
-                            :start-angle-2 ((radial-scale
-                                              [0 (:length from-participant-view)]
-                                              [(:start-angle from-participant-view) (:end-angle from-participant-view)])
-                                             from-pos-2)
-                            :end-angle-1   ((radial-scale
-                                              [0 (:length to-participant-view)]
-                                              [(:start-angle to-participant-view) (:end-angle to-participant-view)])
-                                             to-pos-1)
-                            :end-angle-2   ((radial-scale
-                                              [0 (:length to-participant-view)]
-                                              [(:start-angle to-participant-view) (:end-angle to-participant-view)])
-                                             to-pos-2)}))
+                           {:from          participant-id
+                            :to            (get-in feature-map [(-> linkedFeatures first keyword) :participant-id])
+                            :uid           (gensym)
+                            :start-angle-1 (if (nil? from-pos-1)
+                                             (- (:start-angle from-participant-view) 5)
+                                             ((radial-scale
+                                                [0 (:length from-participant-view)]
+                                                [(:start-angle from-participant-view) (:end-angle from-participant-view)])
+                                               from-pos-1))
+                            :start-angle-2 (if (nil? from-pos-2)
+                                             (:start-angle from-participant-view)
+                                             ((radial-scale
+                                                [0 (:length from-participant-view)]
+                                                [(:start-angle from-participant-view) (:end-angle from-participant-view)])
+                                               from-pos-2))
+                            :end-angle-1   (if (nil? to-pos-1)
+                                             (- (:start-angle to-participant-view) 5)
+                                             ((radial-scale
+                                                [0 (:length to-participant-view)]
+                                                [(:start-angle to-participant-view) (:end-angle to-participant-view)])
+                                               to-pos-1))
+                            :end-angle-2   (if (nil? to-pos-2)
+                                             (:start-angle to-participant-view)
+                                             ((radial-scale
+                                                [0 (:length to-participant-view)]
+                                                [(:start-angle to-participant-view) (:end-angle to-participant-view)])
+                                               to-pos-2))}))
                        feature-map)]
-        (assoc db :feature-map feature-map
-                  :link-views links)))))
+        {:db       (assoc db :feature-map feature-map
+                             :link-views links)
+         :dispatch [:shape-features]}))))
+
+(reg-event-db
+  :shape-features
+  (fn [db]
+    (let [features     (vals (get-in db [:feature-map]))
+          entity-views (get-in db [:views :entities])]
+      (update-in db [:views]
+                 assoc
+                 :features (map (fn [next]
+                                  (let [[start-pos end-pos]      (parse-pos (:pos (first (get-in next [:sequenceData]))))
+                                        view     (get entity-views (:participant-id next))
+                                        scale (radial-scale [0 (:length view)]
+                                                            [(:start-angle view) (:end-angle view)])
+                                        ]
+
+                                    {:start-angle (scale start-pos)
+                                     :participant-id (:participant-id next)
+                                     :end-angle (scale end-pos)})) features)))))
 
 (reg-event-fx
   :success-fetch-complex
@@ -123,3 +153,48 @@
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success      [:success-fetch-complex]
                   :on-failure      [:bad-http-result]}}))
+
+
+(reg-event-db
+  :set-pinch-depth
+  (fn [db [_ amount]]
+    (assoc-in db [:options :pinch-depth] amount)))
+
+(reg-event-db
+  :set-pinch-percent
+  (fn [db [_ amount]]
+    (assoc-in db [:options :pinch-percent] amount)))
+
+(reg-event-db
+  :highlight-entity
+  (fn [db [_ id]]
+    (if id
+      (let [visible-links (map :uid (filter (fn [{:keys [from to]}]
+                                              (or (= from id) (= to id))) (filter (fn [{:keys [start-angle-1 end-angle-1]}]
+                                                                                    (> start-angle-1 end-angle-1)) (:link-views db))))
+            visible-nodes (flatten (map (juxt :to :from) (filter (fn [{:keys [from to]}]
+                                                                   (or (= from id) (= to id))) (filter (fn [{:keys [start-angle-1 end-angle-1]}]
+                                                                                                         (> start-angle-1 end-angle-1)) (:link-views db)))))]
+        (update db :flags assoc
+                :highlight-entity id
+                :visible-nodes visible-nodes
+                :visible-links visible-links))
+      (update db :flags assoc
+              :highlight-entity nil
+              :visible-nodes nil
+              :visible-links nil))))
+
+(reg-event-db
+  :highlight-link
+  (fn [db [_ id from to]]
+    (if id
+      (let [visible-links [id]
+            visible-nodes [from to]]
+        (update db :flags assoc
+                :highlight-entity id
+                :visible-nodes visible-nodes
+                :visible-links visible-links))
+      (update db :flags assoc
+              :highlight-entity nil
+              :visible-nodes nil
+              :visible-links nil))))

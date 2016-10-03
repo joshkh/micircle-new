@@ -43,3 +43,18 @@
   (fn [db]
     (vals (:entities (:views db)))))
 
+(reg-sub
+  :features
+  (fn [db]
+    (:features (:views db))))
+
+(reg-sub
+  :options
+  (fn [db]
+    (:options db)))
+
+(reg-sub
+  :flags
+  (fn [db]
+    (:flags db)))
+

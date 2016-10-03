@@ -23,7 +23,7 @@
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"
                                     "test/js"]
 
-  :figwheel {:css-dirs ["resources/public/css"]
+  :figwheel {:css-dirs     ["resources/public/css"]
              :ring-handler micircle.handler/dev-handler}
 
   :less {:source-paths ["less"]
@@ -50,7 +50,7 @@
 
     {:id           "min"
      :source-paths ["src/cljs"]
-     :jar true
+     :jar          true
      :compiler     {:main            micircle.core
                     :output-to       "resources/public/js/compiled/app.js"
                     :optimizations   :advanced
@@ -59,6 +59,7 @@
     {:id           "test"
      :source-paths ["src/cljs" "test/cljs"]
      :compiler     {:output-to     "resources/public/js/compiled/test.js"
+                    :output-dir    "resources/public/js/compiled/test"
                     :main          micircle.runner
                     :optimizations :none}}
     ]}
@@ -69,5 +70,5 @@
 
   :uberjar-name "micircle.jar"
 
-  :prep-tasks [["cljsbuild" "once" "min"]["less" "once"] "compile"]
+  :prep-tasks [["cljsbuild" "once" "min"] ["less" "once"] "compile"]
   )

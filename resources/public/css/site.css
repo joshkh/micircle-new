@@ -16,10 +16,34 @@ path.arc {
   stroke: #cbcbcb;
   stroke-width: 1px;
 }
+path.unknown {
+  fill: #fdff7c;
+  stroke: #cbcbcb;
+  stroke-width: 1px;
+}
 path.link {
   fill: #bdbdbd;
   stroke: #b7b3b3;
   opacity: 0.5;
+  stroke-width: 1px;
+}
+path.tick {
+  stroke: black;
+  stroke-width: 0.25px;
+  fill: none;
+}
+div.pane {
+  padding: 10px;
+  background-color: white;
+}
+g.mute {
+  opacity: 0.1;
+}
+path.mute {
+  opacity: 0.1;
+}
+path.feature {
+  fill: #989898;
 }
 .jh-root,
 .jh-type-object,
