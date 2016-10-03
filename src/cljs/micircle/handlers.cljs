@@ -177,6 +177,11 @@
     (assoc-in db [:options :pinch-percent] amount)))
 
 (reg-event-db
+  :toggle-inline-features
+  (fn [db]
+    (update-in db [:options :inline-features] not)))
+
+(reg-event-db
   :highlight-entity
   (fn [db [_ id]]
     (if id

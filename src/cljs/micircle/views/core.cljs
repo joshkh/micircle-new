@@ -20,20 +20,28 @@
                   :min       0
                   :max       0.5
                   :step      0.01
-                  :on-change (fn [e] (dispatch [:set-pinch-percent (.. e -target -value)]))}]]]])))
+                  :on-change (fn [e] (dispatch [:set-pinch-percent (.. e -target -value)]))}]]
+        [:fieldset
+         [:label
+          [:input {:type "checkbox"
+                   :on-change (fn [] (dispatch [:toggle-inline-features]))
+                   :value (:inline-features @options)}]
+          (str "Inline features? (" (:inline-features @options) ")")]
+
+         ]]])))
 
 (defn center-dot []
   [:circle.center {:cx 250 :cy 250 :r 3}])
 
 (defn def [d]
   [:path {:id (str "entitytextpath" (name (:id d)))
-          :d (math/describe-arc-text-path 250 250 230 (:start-angle d) (:end-angle d))}])
+          :d  (math/describe-arc-text-path 250 250 230 (:start-angle d) (:end-angle d))}])
 
 (defn svg []
   (let [views      (subscribe [:views])
         link-views (subscribe [:link-views])
         options    (subscribe [:options])
-        features (subscribe [:features])]
+        features   (subscribe [:features])]
     (fn []
       [:svg.micircle {:width "500" :height "500"}
        (into [:defs] (map (fn [d] [def d]) @views))
@@ -43,7 +51,10 @@
 
 (defn main []
   (fn []
-    [:div
+    [:div.container
      [:h4 "EBI-9082861"]
-     [svg]
-     [controls]]))
+     [:div.row
+      [:div.col-sm-8
+       [svg]]
+      [:div.col-sm-4
+       [controls]]]]))

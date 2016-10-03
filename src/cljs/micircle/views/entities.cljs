@@ -35,10 +35,15 @@
           interactorRef]]]])))
 
 (defn feature []
-  (let [flags (subscribe [:flags])]
+  (let [flags (subscribe [:flags])
+        options (subscribe [:options])]
     (fn [{:keys [participant-id start-angle end-angle]}]
       [:g
        {:class (if-let [visible-nodes (:visible-nodes @flags)]
                  (if (nil? (some #{participant-id} visible-nodes))
                    "mute"))}
-       [:path.feature {:d (math/describe-arc 250 250 190 start-angle end-angle 10)}]])))
+       [:path.feature {:d (math/describe-arc 250
+                                             250
+                                             (if (:inline-features @options)
+                                               210
+                                               188) start-angle end-angle 10)}]])))
