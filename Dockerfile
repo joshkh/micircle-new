@@ -37,4 +37,8 @@ RUN mkdir -p $LEIN_INSTALL \
 ENV PATH=$PATH:$LEIN_INSTALL
 ENV LEIN_ROOT 1
 
+WORKDIR /usr/src/app
+
+COPY . /usr/src/app
+
 RUN lein run

@@ -40,7 +40,6 @@
 (defn main []
   (fn []
     [:div
-
      [:h4 "EBI-9082861"]
      [svg]
      [controls]]))
