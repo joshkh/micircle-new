@@ -25,6 +25,10 @@
 (defn center-dot []
   [:circle.center {:cx 250 :cy 250 :r 3}])
 
+(defn def [d]
+  [:path {:id (str "entitytextpath" (name (:id d)))
+          :d (math/describe-arc-text-path 250 250 230 (:start-angle d) (:end-angle d))}])
+
 (defn svg []
   (let [views      (subscribe [:views])
         link-views (subscribe [:link-views])
@@ -32,7 +36,7 @@
         features (subscribe [:features])]
     (fn []
       [:svg.micircle {:width "500" :height "500"}
-       ;[center-dot]
+       (into [:defs] (map (fn [d] [def d]) @views))
        (into [:g.links] (map (fn [link] [links/link (assoc link :radius 200) @options]) @link-views))
        (into [:g.entities] (map (fn [entity] [entities/protein entity]) @views))
        (into [:g.features] (map (fn [feature] [entities/feature feature]) @features))])))

@@ -25,7 +25,7 @@ path.link {
   fill: #bdbdbd;
   stroke: #b7b3b3;
   opacity: 0.5;
-  stroke-width: 1px;
+  stroke-width: 0px;
 }
 path.tick {
   stroke: black;
@@ -44,6 +44,9 @@ path.mute {
 }
 path.feature {
   fill: #989898;
+}
+text.label {
+  font-size: 0.75em;
 }
 .jh-root,
 .jh-type-object,

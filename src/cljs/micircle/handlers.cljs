@@ -32,18 +32,29 @@
   :shape-entities
   (fn [{db :db}]
     (let [scale-fn (partial degree-scale (apply + (map (fn [p] (get-in db [:lengths (:interactorRef p)])) (participants (:data db)))))]
-      {:db       (assoc-in db [:views :entities]
-                           (reduce (fn [v p]
-                                     (let [p-length (get-in db [:lengths (:interactorRef p)])
-                                           total    (apply + (map :length (vals v)))]
-                                       (assoc v (keyword (:id p)) {:interactorRef (keyword (:interactorRef p))
-                                                                   :id            (keyword (:id p))
-                                                                   :length        p-length
-                                                                   :start-angle   (scale-fn total)
-                                                                   :end-angle     (- (scale-fn (+ total p-length)) 10)})))
-                                   {}
-                                   (participants (:data db))))
-       :dispatch [:shape-links]})))
+      {:db         (assoc-in db [:views :entities]
+                             (reduce (fn [v p]
+                                       (let [p-length (get-in db [:lengths (:interactorRef p)])
+                                             total    (apply + (map :length (vals v)))]
+                                         (assoc v (keyword (:id p)) {:interactorRef (keyword (:interactorRef p))
+                                                                     :id            (keyword (:id p))
+                                                                     :length        p-length
+                                                                     :start-angle   (scale-fn total)
+                                                                     :end-angle     (- (scale-fn (+ total p-length)) 10)})))
+                                     {}
+                                     (participants (:data db))))
+       :dispatch-n [
+                    ;[:shape-defs]
+                    [:shape-links]]})))
+
+;(reg-event-db
+;  :shape-defs
+;  (fn [db]
+;    (println
+;      "DEFS"
+;      (map (fn [entity]
+;             ) (get-in db [:views :entities])))
+;    db))
 
 (defn parse-pos [str]
   (map (fn [part] (let [parsed (js/parseInt part)] (if-not (js/isNaN parsed) parsed nil))) (clojure.string/split str "-")))
@@ -107,15 +118,15 @@
       (update-in db [:views]
                  assoc
                  :features (map (fn [next]
-                                  (let [[start-pos end-pos]      (parse-pos (:pos (first (get-in next [:sequenceData]))))
-                                        view     (get entity-views (:participant-id next))
+                                  (let [[start-pos end-pos] (parse-pos (:pos (first (get-in next [:sequenceData]))))
+                                        view  (get entity-views (:participant-id next))
                                         scale (radial-scale [0 (:length view)]
                                                             [(:start-angle view) (:end-angle view)])
                                         ]
 
-                                    {:start-angle (scale start-pos)
+                                    {:start-angle    (scale start-pos)
                                      :participant-id (:participant-id next)
-                                     :end-angle (scale end-pos)})) features)))))
+                                     :end-angle      (scale end-pos)})) features)))))
 
 (reg-event-fx
   :success-fetch-complex

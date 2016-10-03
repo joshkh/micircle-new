@@ -87,6 +87,15 @@
                               "A" (+ thickness radius) (+ thickness radius) 0 large-arc-flag 1 (:x start-outer) (:y start-outer)
                               "Z"])))
 
+(defn describe-arc-text-path
+  [x y radius start-angle end-angle & [thickness]]
+  (let [thickness      (if thickness thickness 10)
+        start-inner    (polar-to-cartesian x y radius start-angle)
+        end-inner      (polar-to-cartesian x y radius end-angle)
+        large-arc-flag (if (<= (- end-angle start-angle) 180) 0 1)]
+    (clojure.string/join " " ["M" (:x start-inner) (:y start-inner)
+                              "A" radius radius 0 large-arc-flag 1 (:x end-inner) (:y end-inner)])))
+
 (defn describe-tick
   [x y radius angle & [thickness]]
   (let [thickness      (if thickness thickness 10)

@@ -12,7 +12,7 @@
     (fn []
       [:div
        [main/main]
-       ;[:div (json-html/edn->hiccup (select-keys @app-db [:views :feature-map :link-views]))]
+       [:div (json-html/edn->hiccup (select-keys @app-db [:views :feature-map :link-views]))]
        ]
       #_[:div (str "Hello from " @name ". This is the Home Page.")
          [:div [:a {:href "#/about"} "go to About Page"]]
