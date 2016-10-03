@@ -9,6 +9,7 @@
   (let [options (subscribe [:options])]
     (fn []
       [:div.pane
+       [:h3 "Configuration"]
        [:form.pure-form.pure-form-stacked
         [:fieldset
          [:label (str "Pinch Depth (" (:pinch-depth @options) ")")]
