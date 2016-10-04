@@ -46,4 +46,4 @@
                                              250
                                              (if (:inline-features @options)
                                                210
-                                               188) start-angle end-angle 10)}]])))
+                                               225) start-angle end-angle 10)}]])))
