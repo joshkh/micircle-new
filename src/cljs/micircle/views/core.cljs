@@ -29,10 +29,8 @@
          [:label
           [:input {:type      "checkbox"
                    :on-change (fn [] (dispatch [:toggle-inline-features]))
-                   :value     (:inline-features @options)}]
-          (str "Inline features? (" (:inline-features @options) ")")]
-
-         ]]])))
+                   :checked     (:inline-features @options)}]
+          (str "Inline features? (" (:inline-features @options) ")")]]]])))
 
 (defn center-dot []
   [:circle.center {:cx 250 :cy 250 :r 3}])
@@ -45,19 +43,17 @@
   (let [views      (subscribe [:views])
         link-views (subscribe [:link-views])
         options    (subscribe [:options])
-        features   (subscribe [:features])
-        pallete    (cc/gradient :blue :red (count @link-views)) ;(cc/gradient "#55626F" "#FC6A6B" (count @link-views))
-        ]
+        features   (subscribe [:features])]
     (fn []
-      [:svg.micircle {:width "500" :height "500"}
-       (into [:defs] (map (fn [d] [def d]) @views))
-       (into [:g.links] (map-indexed (fn [idx link]
-                                       [links/link (assoc link :radius 200
-                                                               :color (nth pallete idx)) @options]) @link-views))
-       (into [:g.entities] (map (fn [entity] [entities/protein entity]) @views))
-       (into [:g.features] (map-indexed (fn [idx feature]
-                                          [entities/feature (assoc feature
-                                                              :color (nth (vals x11/swatch) idx))]) @features))])))
+      (let [pallete (cc/gradient :blue :red (count @link-views))]
+        [:svg.micircle {:width "500" :height "500"}
+        (into [:defs] (map (fn [d] [def d]) @views))
+        (into [:g.links] (map-indexed (fn [idx link]
+                                        [links/link (assoc link :radius 200
+                                                                :color (nth pallete idx)) @options]) @link-views))
+        (into [:g.entities] (map (fn [entity] [entities/protein entity]) @views))
+        (into [:g.features] (map-indexed (fn [idx feature]
+                                           [entities/feature feature]) @features))]))))
 
 (defn main []
   (fn []

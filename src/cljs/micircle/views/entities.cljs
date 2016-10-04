@@ -37,7 +37,7 @@
 (defn feature []
   (let [flags (subscribe [:flags])
         options (subscribe [:options])]
-    (fn [{:keys [participant-id start-angle end-angle]}]
+    (fn [{:keys [color participant-id start-angle end-angle]}]
       [:g
        {:class (if-let [visible-nodes (:visible-nodes @flags)]
                  (if (nil? (some #{participant-id} visible-nodes))
