@@ -3,9 +3,7 @@
             [micircle.views.entities :as entities]
             [micircle.views.links :as links]
             [micircle.math :as math]
-            [inkspot.color :as color]
-            [inkspot.color-chart :as cc]
-            [inkspot.color-chart.x11 :as x11]))
+            [inkspot.color-chart :as cc]))
 
 
 (defn controls []
@@ -17,6 +15,7 @@
         [:fieldset
          [:label (str "Pinch Depth (" (:pinch-depth @options) ")")]
          [:input {:type      "range"
+                  :value (:pinch-depth @options)
                   :on-change (fn [e] (dispatch [:set-pinch-depth (.. e -target -value)]))}]]
         [:fieldset
          [:label (str "Pinch Percent (" (:pinch-percent @options) ")")]
@@ -24,7 +23,16 @@
                   :min       0
                   :max       0.5
                   :step      0.01
+                  :value (:pinch-percent @options)
                   :on-change (fn [e] (dispatch [:set-pinch-percent (.. e -target -value)]))}]]
+        [:fieldset
+         [:label (str "Flare (" (:flare @options) ")")]
+         [:input {:type      "range"
+                  :min       2
+                  :max       30
+                  :step      1
+                  :value (:flare @options)
+                  :on-change (fn [e] (dispatch [:set-flare (.. e -target -value)]))}]]
         [:fieldset
          [:label
           [:input {:type      "checkbox"
@@ -49,7 +57,7 @@
         options    (subscribe [:options])
         features   (subscribe [:features])]
     (fn []
-      (let [pallete (cc/gradient :blue :red (count @link-views))]
+      (let [pallete (cc/gradient :red :blue (count @link-views))]
         [:svg.micircle {:width "500" :height "500"}
          (into [:defs] (map (fn [d] [def d]) @views))
          (into [:g.links] (map-indexed (fn [idx link]

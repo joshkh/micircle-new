@@ -37,6 +37,7 @@
         pinch-percent        (js/parseFloat (:pinch-percent options))
         pinch-depth          (js/parseInt (:pinch-depth options))
         ptc                  (partial polar-to-cartesian center-x center-y)
+        flare                (js/parseInt (:flare options))
 
         start-1              (ptc radius start-angle-1)
         start-2              (ptc radius start-angle-2)
@@ -44,20 +45,20 @@
         end-2                (ptc radius end-angle-2)
 
         anchor-start-2       (ptc (- radius pinch-depth) (- start-angle-2 (* pinch-percent (- start-angle-2 start-angle-1))))
-        outer-handle-start-2 (ptc (- radius (/ pinch-depth 4)) (- start-angle-2 0))
-        inner-handle-start-2 (ptc (- radius (/ pinch-depth 4)) (- start-angle-2 (* pinch-percent (- start-angle-2 start-angle-1))))
+        outer-handle-start-2 (ptc (- radius (/ pinch-depth flare)) (- start-angle-2 0))
+        inner-handle-start-2 (ptc (- radius (/ pinch-depth flare)) (- start-angle-2 (* pinch-percent (- start-angle-2 start-angle-1))))
 
         anchor-end-1         (ptc (- radius pinch-depth) (+ end-angle-1 (* pinch-percent (- end-angle-2 end-angle-1))))
-        outer-handle-end-1   (ptc (- radius (/ pinch-depth 4)) (+ end-angle-1 0))
-        inner-handle-end-1   (ptc (- radius (/ pinch-depth 4)) (+ end-angle-1 (* pinch-percent (- end-angle-2 end-angle-1))))
+        outer-handle-end-1   (ptc (- radius (/ pinch-depth flare)) (+ end-angle-1 0))
+        inner-handle-end-1   (ptc (- radius (/ pinch-depth flare)) (+ end-angle-1 (* pinch-percent (- end-angle-2 end-angle-1))))
 
         anchor-end-2         (ptc (- radius pinch-depth) (- end-angle-2 (* pinch-percent (- end-angle-2 end-angle-1))))
-        outer-handle-end-2   (ptc (- radius (/ pinch-depth 4)) (- end-angle-2 0))
-        inner-handle-end-2   (ptc (- radius (/ pinch-depth 4)) (- end-angle-2 (* pinch-percent (- end-angle-2 end-angle-1))))
+        outer-handle-end-2   (ptc (- radius (/ pinch-depth flare)) (- end-angle-2 0))
+        inner-handle-end-2   (ptc (- radius (/ pinch-depth flare)) (- end-angle-2 (* pinch-percent (- end-angle-2 end-angle-1))))
 
         anchor-start-1       (ptc (- radius pinch-depth) (+ start-angle-1 (* pinch-percent (- start-angle-2 start-angle-1))))
-        outer-handle-start-1 (ptc (- radius (/ pinch-depth 4)) (+ start-angle-1 0))
-        inner-handle-start-1 (ptc (- radius (/ pinch-depth 4)) (+ start-angle-1 (* pinch-percent (- start-angle-2 start-angle-1))))
+        outer-handle-start-1 (ptc (- radius (/ pinch-depth flare)) (+ start-angle-1 0))
+        inner-handle-start-1 (ptc (- radius (/ pinch-depth flare)) (+ start-angle-1 (* pinch-percent (- start-angle-2 start-angle-1))))
 
 
 
@@ -98,9 +99,9 @@
 
 (defn describe-tick
   [x y radius angle & [thickness]]
-  (let [thickness      (if thickness thickness 10)
-        start          (polar-to-cartesian x y radius angle)
-        end            (polar-to-cartesian x y (+ radius 5) angle)]
+  (let [thickness (if thickness thickness 10)
+        start     (polar-to-cartesian x y radius angle)
+        end       (polar-to-cartesian x y (+ radius 5) angle)]
     (clojure.string/join " " ["M" (:x start) (:y start)
                               "L" (:x end) (:y end)])))
 
