@@ -22,7 +22,6 @@ path.unknown {
   stroke-width: 1px;
 }
 path.link {
-  fill: #bdbdbd;
   stroke: #b7b3b3;
   opacity: 0.5;
   stroke-width: 0px;

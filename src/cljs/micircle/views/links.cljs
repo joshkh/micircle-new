@@ -5,11 +5,12 @@
 
 (defn link []
   (let [flags (subscribe [:flags])]
-    (fn [{:keys [from to uid radius start-angle-1 start-angle-2 end-angle-1 end-angle-2]} & [options]]
+    (fn [{:keys [color from to uid radius start-angle-1 start-angle-2 end-angle-1 end-angle-2]} & [options]]
       [:path.link
        {:on-mouse-enter (fn [e] (dispatch [:highlight-link uid from to]))
         :on-mouse-leave (fn [e] (dispatch [:highlight-link nil]))
         ;:style {:filter "url(#spotlight)"}
+        :fill color
         :class (if-let [visible-links (:visible-links @flags)]
                  (if (nil? (some #{uid} visible-links)) "mute"))
         :d     (math/describe-link-new {:center-x      250

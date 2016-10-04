@@ -2,7 +2,10 @@
   (:require [re-frame.core :as re-frame :refer [subscribe dispatch]]
             [micircle.views.entities :as entities]
             [micircle.views.links :as links]
-            [micircle.math :as math]))
+            [micircle.math :as math]
+            [inkspot.color :as color]
+            [inkspot.color-chart :as cc]
+            [inkspot.color-chart.x11 :as x11]))
 
 
 (defn controls []
@@ -24,9 +27,9 @@
                   :on-change (fn [e] (dispatch [:set-pinch-percent (.. e -target -value)]))}]]
         [:fieldset
          [:label
-          [:input {:type "checkbox"
+          [:input {:type      "checkbox"
                    :on-change (fn [] (dispatch [:toggle-inline-features]))
-                   :value (:inline-features @options)}]
+                   :value     (:inline-features @options)}]
           (str "Inline features? (" (:inline-features @options) ")")]
 
          ]]])))
@@ -42,13 +45,19 @@
   (let [views      (subscribe [:views])
         link-views (subscribe [:link-views])
         options    (subscribe [:options])
-        features   (subscribe [:features])]
+        features   (subscribe [:features])
+        pallete    (cc/gradient :blue :red (count @link-views)) ;(cc/gradient "#55626F" "#FC6A6B" (count @link-views))
+        ]
     (fn []
       [:svg.micircle {:width "500" :height "500"}
        (into [:defs] (map (fn [d] [def d]) @views))
-       (into [:g.links] (map (fn [link] [links/link (assoc link :radius 200) @options]) @link-views))
+       (into [:g.links] (map-indexed (fn [idx link]
+                                       [links/link (assoc link :radius 200
+                                                               :color (nth pallete idx)) @options]) @link-views))
        (into [:g.entities] (map (fn [entity] [entities/protein entity]) @views))
-       (into [:g.features] (map (fn [feature] [entities/feature feature]) @features))])))
+       (into [:g.features] (map-indexed (fn [idx feature]
+                                          [entities/feature (assoc feature
+                                                              :color (nth (vals x11/swatch) idx))]) @features))])))
 
 (defn main []
   (fn []
