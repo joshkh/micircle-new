@@ -10,7 +10,7 @@
 
 (defn protein []
   (let [flags (subscribe [:flags])]
-    (fn [{:keys [id interactorRef start-angle end-angle]}]
+    (fn [{:keys [label id interactorRef start-angle end-angle]}]
       [:g
        {:class          (if-let [visible-nodes (:visible-nodes @flags)]
                           (if (nil? (some #{id} visible-nodes))
@@ -32,7 +32,7 @@
         [:text.label {:text-anchor "middle"}
          [:textPath {:startOffset "50%"
                      :xlinkHref (str "#entitytextpath" (name id))}
-          interactorRef]]]])))
+          label]]]])))
 
 (defn feature []
   (let [flags (subscribe [:flags])

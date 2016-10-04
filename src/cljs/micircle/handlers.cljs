@@ -13,6 +13,9 @@
 (defn participants [data]
   (first (s/select [:data s/ALL #(= "interaction" (:object %)) :participants] data)))
 
+(defn interactors [data]
+  (s/select [:data s/ALL #(= "interaction")] data))
+
 
 
 (re-frame/reg-event-db
@@ -31,7 +34,8 @@
 (reg-event-fx
   :shape-entities
   (fn [{db :db}]
-    (let [scale-fn (partial degree-scale (apply + (map (fn [p] (get-in db [:lengths (:interactorRef p)])) (participants (:data db)))))]
+    (let [interactors (reduce (fn [total next] (assoc total (:id next) next)) {} (interactors (:data db)))
+          scale-fn (partial degree-scale (apply + (map (fn [p] (get-in db [:lengths (:interactorRef p)])) (participants (:data db)))))]
       {:db         (assoc-in db [:views :entities]
                              (reduce (fn [v p]
                                        (let [p-length (get-in db [:lengths (:interactorRef p)])
@@ -39,6 +43,7 @@
                                          (assoc v (keyword (:id p)) {:interactorRef (keyword (:interactorRef p))
                                                                      :id            (keyword (:id p))
                                                                      :length        p-length
+                                                                     :label         (get-in interactors [(:interactorRef p) :label])
                                                                      :start-angle   (scale-fn total)
                                                                      :end-angle     (- (scale-fn (+ total p-length)) 10)})))
                                      {}
