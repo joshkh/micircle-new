@@ -44,6 +44,7 @@
                                                                      :id            (keyword (:id p))
                                                                      :length        p-length
                                                                      :label         (get-in interactors [(:interactorRef p) :label])
+                                                                     :type (get-in interactors [(:interactorRef p) :type])
                                                                      :start-angle   (scale-fn total)
                                                                      :end-angle     (- (scale-fn (+ total p-length)) 10)})))
                                      {}
@@ -147,10 +148,12 @@
 (reg-event-fx
   :success-fetch-length
   (fn [{db :db} [_ id label [{length :length}]]]
-    (let [new-db (assoc-in db [:lengths label] (js/parseInt length))]
+    (let [new-db (assoc-in db [:lengths label] (if (nil? length) 10 (js/parseInt length)))]
       (cond->
         {:db new-db}
         (>= (count (keys (get-in new-db [:lengths]))) 3) (merge {:dispatch [:shape-entities]})))))
+
+
 
 (reg-event-fx
   :fetch-length
@@ -161,7 +164,7 @@
                   :timeout         30000
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success      [:success-fetch-length id label]
-                  :on-failure      [:bad-http-result]}}))
+                  :on-failure      [:success-fetch-length id label nil]}}))
 
 (reg-event-fx
   :fetch-complex

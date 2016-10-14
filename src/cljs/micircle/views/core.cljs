@@ -63,9 +63,10 @@
          (into [:g.links] (map-indexed (fn [idx link]
                                          [links/link (assoc link :radius 200
                                                                  :color (nth pallete idx)) @options]) @link-views))
-         (into [:g.entities] (map (fn [entity] [entities/protein entity]) @views))
+         (into [:g.entities] (map (fn [entity] [entities/small-molecule]) @views))
          (into [:g.features] (map-indexed (fn [idx feature]
-                                            [entities/feature feature]) @features))]))))
+                                            [entities/feature feature]) @features))
+         [entities/small-molecule]]))))
 
 (defn main []
   (fn []
