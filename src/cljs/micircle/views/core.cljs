@@ -15,7 +15,7 @@
         [:fieldset
          [:label (str "Pinch Depth (" (:pinch-depth @options) ")")]
          [:input {:type      "range"
-                  :value (:pinch-depth @options)
+                  :value     (:pinch-depth @options)
                   :on-change (fn [e] (dispatch [:set-pinch-depth (.. e -target -value)]))}]]
         [:fieldset
          [:label (str "Pinch Percent (" (:pinch-percent @options) ")")]
@@ -23,7 +23,7 @@
                   :min       0
                   :max       0.5
                   :step      0.01
-                  :value (:pinch-percent @options)
+                  :value     (:pinch-percent @options)
                   :on-change (fn [e] (dispatch [:set-pinch-percent (.. e -target -value)]))}]]
         [:fieldset
          [:label (str "Flare (" (:flare @options) ")")]
@@ -31,7 +31,7 @@
                   :min       2
                   :max       30
                   :step      1
-                  :value (:flare @options)
+                  :value     (:flare @options)
                   :on-change (fn [e] (dispatch [:set-flare (.. e -target -value)]))}]]
         [:fieldset
          [:label
@@ -63,16 +63,20 @@
          (into [:g.links] (map-indexed (fn [idx link]
                                          [links/link (assoc link :radius 200
                                                                  :color (nth pallete idx)) @options]) @link-views))
-         (into [:g.entities] (map (fn [entity] [entities/protein entity]) @views))
+         (into [:g.entities] (map (fn [entity]
+                                    (case (:type entity)
+                                      "protein" [entities/protein entity]
+                                      "small molecule" [entities/small-molecule entity])) @views))
          (into [:g.features] (map-indexed (fn [idx feature]
                                             [entities/feature feature]) @features))]))))
 
 (defn main []
-  (fn []
-    [:div.container
-     [:h4 "EBI-9082861"]
-     [:div.row
-      [:div.col-sm-8
-       [svg]]
-      [:div.col-sm-4
-       [controls]]]]))
+  (let [complex-id (subscribe [:complex-id])]
+    (fn []
+      [:div.container
+       [:h4 @complex-id]
+       [:div.row
+        [:div.col-sm-8
+         [svg]]
+        [:div.col-sm-4
+         [controls]]]])))

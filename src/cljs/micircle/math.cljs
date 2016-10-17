@@ -105,6 +105,24 @@
     (clojure.string/join " " ["M" (:x start) (:y start)
                               "L" (:x end) (:y end)])))
 
+(defn place-at-radius [center-x center-y radius angle]
+  (let [{x :x y :y}] (polar-to-cartesian center-x center-y radius angle)))
+
+
+(defn describe-triangle [center-x center-y radius start-angle end-angle & [thickness]]
+
+  (clojure.string/join " " ["M" 12 0
+                            "L" 24 24
+                            "L" 0 24
+                            "Z"])
+  (let [thickness (if thickness thickness 20)
+        {x :x y :y} (polar-to-cartesian center-x center-y (+ thickness radius) (- end-angle start-angle))]
+    (println "thickness" thickness)
+    (clojure.string/join " " ["M" 12 0
+                              "L" 24 24
+                              "L" 0 24
+                              "Z"])))
+
 
 
 #_(defn describe-arc

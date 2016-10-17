@@ -58,3 +58,8 @@
   (fn [db]
     (:flags db)))
 
+(reg-sub
+  :complex-id
+  (fn [db]
+    (:complex-id db)))
+

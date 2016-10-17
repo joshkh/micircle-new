@@ -34,6 +34,10 @@
                      :xlinkHref (str "#entitytextpath" (name id))}
           label]]]])))
 
+(defn small-molecule []
+  (fn [{:keys [label id interactorRef start-angle end-angle]}]
+    [:path.small-molecule {:d (math/describe-triangle 250 250 200 start-angle end-angle)}]))
+
 (defn feature []
   (let [flags (subscribe [:flags])
         options (subscribe [:options])]

@@ -7,6 +7,10 @@
             [micircle.math :as math]
             [com.rpl.specter :as s]))
 
+(defn vecmap->map [key v]
+  (reduce (fn [total next]
+            (assoc total (get-in next key) next)) {} v))
+
 (defn identifiers [data]
   (s/select [:data s/ALL #(= "interactor" (:object %)) (s/collect-one :identifier) :id] data))
 
@@ -15,6 +19,9 @@
 
 (defn interactors [data]
   (s/select [:data s/ALL #(= "interaction")] data))
+
+(defn classes [data]
+  (s/select [:data s/ALL #(= "interactor")] data))
 
 
 
@@ -35,19 +42,21 @@
   :shape-entities
   (fn [{db :db}]
     (let [interactors (reduce (fn [total next] (assoc total (:id next) next)) {} (interactors (:data db)))
-          scale-fn (partial degree-scale (apply + (map (fn [p] (get-in db [:lengths (:interactorRef p)])) (participants (:data db)))))]
+          scale-fn    (partial degree-scale (apply + (map (fn [p] (get-in db [:lengths (:interactorRef p)])) (participants (:data db)))))]
       {:db         (assoc-in db [:views :entities]
-                             (reduce (fn [v p]
-                                       (let [p-length (get-in db [:lengths (:interactorRef p)])
-                                             total    (apply + (map :length (vals v)))]
-                                         (assoc v (keyword (:id p)) {:interactorRef (keyword (:interactorRef p))
-                                                                     :id            (keyword (:id p))
-                                                                     :length        p-length
-                                                                     :label         (get-in interactors [(:interactorRef p) :label])
-                                                                     :start-angle   (scale-fn total)
-                                                                     :end-angle     (- (scale-fn (+ total p-length)) 10)})))
-                                     {}
-                                     (participants (:data db))))
+                             (let [entity-map (get-in db [:entity-map])]
+                               (reduce (fn [v p]
+                                         (let [p-length (get-in db [:lengths (:interactorRef p)])
+                                               total    (apply + (map :length (vals v)))]
+                                           (assoc v (keyword (:id p)) {:interactorRef (keyword (:interactorRef p))
+                                                                       :id            (keyword (:id p))
+                                                                       :length        p-length
+                                                                       :type          (get-in entity-map [(:interactorRef p) :type :name])
+                                                                       :label         (get-in interactors [(:interactorRef p) :label])
+                                                                       :start-angle   (scale-fn total)
+                                                                       :end-angle     (- (scale-fn (+ total p-length)) 10)})))
+                                       {}
+                                       (participants (:data db)))))
        :dispatch-n [
                     ;[:shape-defs]
                     [:shape-links]]})))
@@ -140,8 +149,9 @@
 (reg-event-fx
   :success-fetch-complex
   (fn [{db :db} [_ response]]
-    {:db         (assoc db :data response)
-     :dispatch-n (map (fn [[{id :id} label]]
+    {:db         (assoc db :data response
+                           :entity-map (vecmap->map [:id] (classes response)))
+     :dispatch-n (map (fn [[{:keys [id] :as total} label]]
                         [:fetch-length id label]) (identifiers response))}))
 
 (reg-event-fx
@@ -150,7 +160,12 @@
     (let [new-db (assoc-in db [:lengths label] (js/parseInt length))]
       (cond->
         {:db new-db}
-        (>= (count (keys (get-in new-db [:lengths]))) 3) (merge {:dispatch [:shape-entities]})))))
+        (>= (count (keys (get-in new-db [:lengths]))) (count (identifiers (get-in db [:data])))) (merge {:dispatch [:shape-entities]})))))
+
+(reg-event-db
+  :failure-fetch-length
+  (fn [db [_ id label response]]
+    (assoc-in db [:lengths label] 50)))
 
 (reg-event-fx
   :fetch-length
@@ -161,12 +176,12 @@
                   :timeout         30000
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success      [:success-fetch-length id label]
-                  :on-failure      [:bad-http-result]}}))
+                  :on-failure      [:failure-fetch-length id label]}}))
 
 (reg-event-fx
   :fetch-complex
   (fn [{:keys [db]} [_ id]]
-    {:db         (assoc db :show-twirly true)
+    {:db         (assoc db :show-twirly true :complex-id id)
      :http-xhrio {:method          :get
                   :uri             (str "http://www.ebi.ac.uk/intact/complex-ws/export/" id)
                   :timeout         30000
