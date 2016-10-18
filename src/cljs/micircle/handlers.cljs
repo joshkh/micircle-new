@@ -5,7 +5,8 @@
             [day8.re-frame.http-fx]
             [ajax.core :as ajax :refer [GET POST]]
             [micircle.math :as math]
-            [com.rpl.specter :as s]))
+            [com.rpl.specter :as s]
+            [tubax.core :refer [xml->clj]]))
 
 (defn vecmap->map [key v]
   (reduce (fn [total next]
@@ -47,14 +48,17 @@
                              (let [entity-map (get-in db [:entity-map])]
                                (reduce (fn [v p]
                                          (let [p-length (get-in db [:lengths (:interactorRef p)])
-                                               total    (apply + (map :length (vals v)))]
+                                               total    (apply + (map :length (vals v)))
+                                               type     (get-in entity-map [(:interactorRef p) :type :name])]
                                            (assoc v (keyword (:id p)) {:interactorRef (keyword (:interactorRef p))
                                                                        :id            (keyword (:id p))
                                                                        :length        p-length
                                                                        :type          (get-in entity-map [(:interactorRef p) :type :name])
                                                                        :label         (get-in interactors [(:interactorRef p) :label])
                                                                        :start-angle   (scale-fn total)
-                                                                       :end-angle     (- (scale-fn (+ total p-length)) 10)})))
+                                                                       :end-angle     (case type
+                                                                                        "protein" (- (scale-fn (+ total p-length)) 0)
+                                                                                        "small molecule" (- (scale-fn (+ total p-length)) 0))})))
                                        {}
                                        (participants (:data db)))))
        :dispatch-n [
@@ -78,6 +82,12 @@
     (let [percent (/ input (- upper-domain lower-domain))]
       (+ lower-range (* percent (- upper-range lower-range))))))
 
+(defn shortest-distance [d1 d2]
+  (let [angle (mod (.abs js/Math (- d1 d2)) 360)]
+    (if (> angle 180)
+      (- 360 angle)
+      angle)))
+
 (reg-event-fx
   :shape-links
   (fn [{db :db}]
@@ -92,29 +102,47 @@
                                from-participant-view (participant-id entity-views)
                                to-participant-view   (get entity-views (get-in feature-map [(-> linkedFeatures first keyword) :participant-id]))]
 
+                           ;(.log js/console "TEST" from-participant-view)
+
+
                            {:from          participant-id
                             :to            (get-in feature-map [(-> linkedFeatures first keyword) :participant-id])
                             :uid           (gensym)
                             :start-angle-1 (if (nil? from-pos-1)
-                                             (- (:start-angle from-participant-view) 5)
+                                             (case (:type from-participant-view)
+                                               "protein" (- (:start-angle from-participant-view) 5)
+                                               "small molecule" (shortest-distance (:end-angle from-participant-view) (:start-angle from-participant-view))
+                                               nil)
+
                                              ((radial-scale
                                                 [0 (:length from-participant-view)]
                                                 [(:start-angle from-participant-view) (:end-angle from-participant-view)])
                                                from-pos-1))
                             :start-angle-2 (if (nil? from-pos-2)
-                                             (:start-angle from-participant-view)
+                                             (case (:type from-participant-view)
+                                               "protein" (:start-angle from-participant-view)
+                                               "small molecule" (shortest-distance (:end-angle from-participant-view) (:start-angle from-participant-view))
+                                               nil)
+
                                              ((radial-scale
                                                 [0 (:length from-participant-view)]
                                                 [(:start-angle from-participant-view) (:end-angle from-participant-view)])
                                                from-pos-2))
                             :end-angle-1   (if (nil? to-pos-1)
-                                             (- (:start-angle to-participant-view) 5)
+                                             (case (:type to-participant-view)
+                                               "protein" (- (:start-angle to-participant-view) 5)
+                                               "small molecule" (shortest-distance (:end-angle to-participant-view) (:start-angle to-participant-view))
+                                               nil)
                                              ((radial-scale
                                                 [0 (:length to-participant-view)]
                                                 [(:start-angle to-participant-view) (:end-angle to-participant-view)])
                                                to-pos-1))
                             :end-angle-2   (if (nil? to-pos-2)
-                                             (:start-angle to-participant-view)
+                                             (case (:type to-participant-view)
+                                               "protein" (:start-angle to-participant-view)
+                                               "small molecule" (shortest-distance (:end-angle to-participant-view) (:start-angle to-participant-view))
+                                               nil)
+
                                              ((radial-scale
                                                 [0 (:length to-participant-view)]
                                                 [(:start-angle to-participant-view) (:end-angle to-participant-view)])
@@ -151,21 +179,77 @@
   (fn [{db :db} [_ response]]
     {:db         (assoc db :data response
                            :entity-map (vecmap->map [:id] (classes response)))
-     :dispatch-n (map (fn [[{:keys [id] :as total} label]]
-                        [:fetch-length id label]) (identifiers response))}))
+     :dispatch-n (concat
+                   (map (fn [[{:keys [id] :as total} label]]
+                          [:fetch-length id label]) (identifiers response))
+                   (map (fn [[{:keys [id] :as total} label]]
+                          [:fetch-superfamily id label]) (identifiers response)))}))
+
+
+(defn parse-features [response]
+  (map (fn [line]
+         (.log js/console "line" line)
+         (.log js/console "split" (clojure.string/split line "\t"))
+         (clojure.string/split line "\t")) (clojure.string/split-lines response)))
 
 (reg-event-fx
   :success-fetch-length
-  (fn [{db :db} [_ id label [{length :length}]]]
+  (fn [{db :db} [_ id label [{:keys [length]}]]]
     (let [new-db (assoc-in db [:lengths label] (js/parseInt length))]
-      (cond->
-        {:db new-db}
-        (>= (count (keys (get-in new-db [:lengths]))) (count (identifiers (get-in db [:data])))) (merge {:dispatch [:shape-entities]})))))
+      (println "LENGTH" length)
+      {:db       new-db
+       :dispatch [:shape-entities]}
+      #_(cond->
+          {:db new-db}
+          (>= (count (keys (get-in new-db [:lengths]))) (count (identifiers (get-in db [:data])))) (merge {:dispatch [:shape-entities]})))))
 
-(reg-event-db
+(reg-event-fx
   :failure-fetch-length
-  (fn [db [_ id label response]]
-    (assoc-in db [:lengths label] 50)))
+  (fn [{db :db} [_ id label response]]
+    (println "FAIL" id)
+    {:db       (assoc-in db [:lengths label] 20)
+     :dispatch [:shape-entities]}))
+
+(defn has-tag? [v]
+  (fn [m]
+    (= v (:tag m))))
+
+(defn equals? [v]
+  (fn [x] (= v x)))
+
+(defn parse-superfamily-features [supfam-response]
+  (->> (s/select [:content
+                  s/ALL
+                  :content
+                  s/ALL
+                  (has-tag? :SEGMENT)
+                  :content
+                  s/ALL
+                  (has-tag? :FEATURE)
+                  (s/collect-one [:attributes :id])
+                  :content
+                  s/ALL]
+                 (xml->clj supfam-response))
+       (reduce (fn [total [id data]]
+                 (assoc-in total [id (:tag data)] (first (:content data)))) {})))
+
+(reg-event-fx
+  :success-fetch-superfamily
+  (fn [{db :db} [_ id label response]]
+    {:db (assoc-in db [:fts :superfamily id] (parse-superfamily-features response))}))
+
+
+(reg-event-fx
+  :fetch-superfamily
+  (fn [{:keys [db]} [_ id label]]
+    {:db         (assoc db :show-twirly true)
+     :http-xhrio {:method          :get
+                  ;:uri             (str "http://www.uniprot.org/uniprot/?format=json&columns=length,id,features&query=accession:" id)
+                  :uri             (str "http://supfam.org/SUPERFAMILY/cgi-bin/das/up/features?segment=" id)
+                  :timeout         30000
+                  :response-format (ajax/text-response-format)
+                  :on-success      [:success-fetch-superfamily id label]
+                  :on-failure      [:failure-fetch-superfamily id label]}}))
 
 (reg-event-fx
   :fetch-length
@@ -176,7 +260,7 @@
                   :timeout         30000
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success      [:success-fetch-length id label]
-                  :on-failure      [:failure-fetch-length id label]}}))
+                  :on-failure      [:bad-http-result]}}))
 
 (reg-event-fx
   :fetch-complex

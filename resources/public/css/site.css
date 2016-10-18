@@ -49,6 +49,12 @@ path.feature {
 text.label {
   font-size: 1em;
 }
+path.small-molecule {
+  fill: white;
+  stroke: #cbcbcb;
+  stroke-width: 1px;
+  transition: all 0.2s ease;
+}
 .jh-root,
 .jh-type-object,
 .jh-type-array,

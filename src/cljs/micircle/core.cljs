@@ -23,6 +23,7 @@
   (routes/app-routes)
   (re-frame/dispatch-sync [:initialize-db])
   ;(re-frame/dispatch [:fetch-complex "EBI-9082861"])
-  (re-frame/dispatch [:fetch-complex "EBI-9691559"])
+  ;(re-frame/dispatch [:fetch-complex "EBI-9691559"])
+  (re-frame/dispatch [:fetch-complex "EBI-9008420"])
   (dev-setup)
   (mount-root))

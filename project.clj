@@ -12,6 +12,7 @@
                  [day8.re-frame/http-fx "0.0.4"]
                  [com.rpl/specter "0.13.0"]
                  [json-html "0.4.0"]
+                 [funcool/tubax "0.2.0"]
                  [rm-hull/inkspot "0.2.1"]]
 
   :plugins [[lein-cljsbuild "1.1.4"]
