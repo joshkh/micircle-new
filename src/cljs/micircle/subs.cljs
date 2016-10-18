@@ -63,3 +63,8 @@
   (fn [db]
     (:complex-id db)))
 
+(reg-sub
+  :superfamily-features
+  (fn [db]
+    (get-in db [:views :superfamily])))
+

@@ -55,7 +55,8 @@
   (let [views      (subscribe [:views])
         link-views (subscribe [:link-views])
         options    (subscribe [:options])
-        features   (subscribe [:features])]
+        features   (subscribe [:features])
+        superfam (subscribe [:superfamily-features])]
     (fn []
       (let [pallete (cc/gradient :red :blue (count @link-views))]
         [:svg.micircle {:width "500" :height "500"}
@@ -68,7 +69,9 @@
                                       "protein" [entities/protein entity]
                                       "small molecule" [entities/small-molecule entity])) @views))
          (into [:g.features] (map-indexed (fn [idx feature]
-                                            [entities/feature feature]) @features))]))))
+                                            [entities/feature feature]) @features))
+         (into [:g.superfam] (map-indexed (fn [idx feature]
+                                            [entities/superfam-feature feature]) @superfam))]))))
 
 (defn main []
   (let [complex-id (subscribe [:complex-id])]

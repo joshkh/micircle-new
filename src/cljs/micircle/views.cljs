@@ -12,7 +12,7 @@
     (fn []
       [:div
        [main/main]
-       [:div (json-html/edn->hiccup
+       #_[:div (json-html/edn->hiccup
                @app-db
                ;(select-keys @app-db [:views :lengths :feature-map :link-views])
                )]

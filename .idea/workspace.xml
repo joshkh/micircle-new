@@ -3,9 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="e440f639-ee5f-4ebc-a347-13d8417da5c8" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/core.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/core.cljs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/less/site.less" afterPath="$PROJECT_DIR$/less/site.less" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/micircle.iml" afterPath="$PROJECT_DIR$/micircle.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/public/css/site.css" afterPath="$PROJECT_DIR$/resources/public/css/site.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/handlers.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/handlers.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/math.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/math.cljs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/subs.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/subs.cljs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/views.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/views.cljs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/views/core.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/views/core.cljs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/micircle/views/entities.cljs" afterPath="$PROJECT_DIR$/src/cljs/micircle/views/entities.cljs" />
     </list>
     <ignored path="micircle-new.iws" />
@@ -27,11 +31,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="handlers.cljs" pinned="false" current-in-tab="false">
+      <file leaf-file-name="core.cljs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/cljs/micircle/views/core.cljs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="958">
+              <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="handlers.cljs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/cljs/micircle/handlers.cljs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="107">
-              <caret line="131" column="35" selection-start-line="131" selection-start-column="27" selection-end-line="131" selection-end-column="35" />
+            <state relative-caret-position="502">
+              <caret line="192" column="0" selection-start-line="192" selection-start-column="0" selection-end-line="192" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="subs.cljs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/cljs/micircle/subs.cljs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="683">
+              <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -40,11 +64,9 @@
       <file leaf-file-name="project.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/project.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
+            <state relative-caret-position="207">
               <caret line="9" column="18" selection-start-line="9" selection-start-column="18" selection-end-line="9" selection-end-column="18" />
-              <folding>
-                <marker date="1476744322000" expanded="true" signature="0:2521" ph="(defproject micircle ...)" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -52,18 +74,18 @@
       <file leaf-file-name="site.less" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/less/site.less">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="66" column="16" selection-start-line="66" selection-start-column="16" selection-end-line="66" selection-end-column="16" />
+            <state relative-caret-position="1053">
+              <caret line="62" column="17" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="17" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="entities.cljs" pinned="false" current-in-tab="true">
+      <file leaf-file-name="entities.cljs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cljs/micircle/views/entities.cljs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="747">
-              <caret line="54" column="49" selection-start-line="54" selection-start-column="49" selection-end-line="54" selection-end-column="49" />
+            <state relative-caret-position="230">
+              <caret line="10" column="8" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -72,11 +94,9 @@
       <file leaf-file-name="db.cljs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cljs/micircle/db.cljs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="192">
+            <state relative-caret-position="184">
               <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#176#0" expanded="false" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -84,7 +104,7 @@
       <file leaf-file-name="math.cljs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cljs/micircle/math.cljs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="806">
+            <state relative-caret-position="2714">
               <caret line="118" column="36" selection-start-line="118" selection-start-column="36" selection-end-line="118" selection-end-column="36" />
               <folding />
             </state>
@@ -94,8 +114,18 @@
       <file leaf-file-name="core.cljs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cljs/micircle/core.cljs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="648">
-              <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
+            <state relative-caret-position="184">
+              <caret line="8" column="14" selection-start-line="8" selection-start-column="14" selection-end-line="8" selection-end-column="42" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views.cljs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/cljs/micircle/views.cljs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="138">
+              <caret line="6" column="7" selection-start-line="6" selection-start-column="7" selection-end-line="6" selection-end-column="7" />
               <folding />
             </state>
           </provider>
@@ -119,22 +149,22 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/cljs/micircle/views/links.cljs" />
         <option value="$PROJECT_DIR$/src/cljs/micircle/db.cljs" />
-        <option value="$PROJECT_DIR$/src/cljs/micircle/subs.cljs" />
-        <option value="$PROJECT_DIR$/src/cljs/micircle/views.cljs" />
-        <option value="$PROJECT_DIR$/src/cljs/micircle/views/core.cljs" />
-        <option value="$PROJECT_DIR$/less/site.less" />
         <option value="$PROJECT_DIR$/project.clj" />
         <option value="$PROJECT_DIR$/src/cljs/micircle/math.cljs" />
-        <option value="$PROJECT_DIR$/src/cljs/micircle/handlers.cljs" />
         <option value="$PROJECT_DIR$/src/cljs/micircle/core.cljs" />
+        <option value="$PROJECT_DIR$/src/cljs/micircle/subs.cljs" />
         <option value="$PROJECT_DIR$/src/cljs/micircle/views/entities.cljs" />
+        <option value="$PROJECT_DIR$/less/site.less" />
+        <option value="$PROJECT_DIR$/src/cljs/micircle/views.cljs" />
+        <option value="$PROJECT_DIR$/src/cljs/micircle/views/core.cljs" />
+        <option value="$PROJECT_DIR$/src/cljs/micircle/handlers.cljs" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1382" />
-    <option name="height" value="985" />
+    <option name="x" value="1919" />
+    <option name="width" value="1052" />
+    <option name="height" value="1681" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -257,9 +287,9 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="ReplState" timestamp="1476715036341">{:repl-history {:local [&quot;(take 2.3 (range 10))&quot; &quot;(take 2.1 (range 10))&quot; &quot;(take 2.0 (range 10))&quot;]}}</component>
@@ -542,7 +572,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1382" height="985" extended-state="0" />
+    <frame x="1919" y="0" width="1052" height="1681" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -557,7 +587,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1606876" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19582506" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -593,6 +623,46 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/less/site.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1518">
+          <caret line="66" column="16" selection-start-line="66" selection-start-column="16" selection-end-line="66" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/views/entities.cljs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/db.cljs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/math.cljs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2714">
+          <caret line="118" column="36" selection-start-line="118" selection-start-column="36" selection-end-line="118" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/core.cljs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="621">
+          <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/cljs/micircle/handlers.cljs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -653,9 +723,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
           <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#176#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -679,17 +747,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
           <caret line="15" column="11" selection-start-line="15" selection-start-column="11" selection-end-line="15" selection-end-column="11" />
-          <folding>
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <marker date="1476721427000" expanded="true" signature="159:481" ph="(defn home-panel ...)" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -737,9 +795,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="322">
           <caret line="14" column="42" selection-start-line="14" selection-start-column="42" selection-end-line="14" selection-end-column="42" />
-          <folding>
-            <marker date="1476744322000" expanded="true" signature="0:2521" ph="(defproject micircle ...)" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -747,9 +803,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="138">
           <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#176#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -773,17 +827,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <marker date="1476721427000" expanded="true" signature="159:481" ph="(defn home-panel ...)" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -837,9 +881,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="138">
           <caret line="6" column="34" selection-start-line="6" selection-start-column="34" selection-end-line="6" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#176#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -871,17 +913,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="253">
           <caret line="11" column="10" selection-start-line="11" selection-start-column="10" selection-end-line="11" selection-end-column="10" />
-          <folding>
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <marker date="1476721427000" expanded="true" signature="159:481" ph="(defn home-panel ...)" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -908,95 +940,82 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/subs.cljs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1311">
-          <caret line="57" column="10" selection-start-line="57" selection-start-column="10" selection-end-line="57" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/views.cljs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="18" column="11" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
-          <folding>
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <element signature="e#0#966#0" expanded="false" />
-            <marker date="1476721427000" expanded="true" signature="159:481" ph="(defn home-panel ...)" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/views/core.cljs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1464">
-          <caret line="82" column="0" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/cljs/micircle/db.cljs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
+        <state relative-caret-position="184">
           <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#176#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/less/site.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="66" column="16" selection-start-line="66" selection-start-column="16" selection-end-line="66" selection-end-column="16" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/project.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
+        <state relative-caret-position="207">
           <caret line="9" column="18" selection-start-line="9" selection-start-column="18" selection-end-line="9" selection-end-column="18" />
-          <folding>
-            <marker date="1476744322000" expanded="true" signature="0:2521" ph="(defproject micircle ...)" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cljs/micircle/math.cljs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="806">
+        <state relative-caret-position="2714">
           <caret line="118" column="36" selection-start-line="118" selection-start-column="36" selection-end-line="118" selection-end-column="36" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/handlers.cljs">
+    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/subs.cljs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="107">
-          <caret line="131" column="35" selection-start-line="131" selection-start-column="27" selection-end-line="131" selection-end-column="35" />
+        <state relative-caret-position="683">
+          <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/less/site.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1053">
+          <caret line="62" column="17" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/views.cljs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="6" column="7" selection-start-line="6" selection-start-column="7" selection-end-line="6" selection-end-column="7" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cljs/micircle/core.cljs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="648">
-          <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
+        <state relative-caret-position="184">
+          <caret line="8" column="14" selection-start-line="8" selection-start-column="14" selection-end-line="8" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/views/core.cljs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="958">
+          <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cljs/micircle/views/entities.cljs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="747">
-          <caret line="54" column="49" selection-start-line="54" selection-start-column="49" selection-end-line="54" selection-end-column="49" />
+        <state relative-caret-position="230">
+          <caret line="10" column="8" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cljs/micircle/handlers.cljs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="502">
+          <caret line="192" column="0" selection-start-line="192" selection-start-column="0" selection-end-line="192" selection-end-column="0" />
           <folding />
         </state>
       </provider>

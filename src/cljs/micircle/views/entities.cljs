@@ -31,7 +31,7 @@
        [:g.label
         [:text.label {:text-anchor "middle"}
          [:textPath {:startOffset "50%"
-                     :xlinkHref (str "#entitytextpath" (name id))}
+                     :xlinkHref   (str "#entitytextpath" (name id))}
           label]]]])))
 
 (defn small-molecule []
@@ -39,7 +39,7 @@
     [:path.small-molecule {:d (math/describe-triangle 250 250 200 start-angle end-angle)}]))
 
 (defn feature []
-  (let [flags (subscribe [:flags])
+  (let [flags   (subscribe [:flags])
         options (subscribe [:options])]
     (fn [{:keys [color participant-id start-angle end-angle]}]
       [:g
@@ -52,6 +52,16 @@
                                                210
                                                225) start-angle end-angle 10)}]])))
 
-(defn a-feature [parent id {:keys [TYPE START END]} ]
-  (fn []
-    [:div "done"]))
+(defn superfam-feature []
+  (let [flags   (subscribe [:flags])
+        options (subscribe [:options])]
+    (fn [{:keys [color participant-id start-angle end-angle]}]
+      [:g
+       {:class (if-let [visible-nodes (:visible-nodes @flags)]
+                 (if (nil? (some #{participant-id} visible-nodes))
+                   "mute"))}
+       [:path.superfam {:d (math/describe-arc 250
+                                              250
+                                              (if (:inline-features @options)
+                                                220
+                                                225) start-angle end-angle 5)}]])))

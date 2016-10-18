@@ -127,9 +127,10 @@
                                                 [(:start-angle to-participant-view) (:end-angle to-participant-view)])
                                                to-pos-2))}))
                        feature-map)]
-        {:db       (assoc db :feature-map feature-map
-                             :link-views links)
-         :dispatch [:shape-features]}))))
+        {:db         (assoc db :feature-map feature-map
+                               :link-views links)
+         :dispatch-n [[:shape-features]
+                      [:shape-superfam-features]]}))))
 
 
 
@@ -152,6 +153,26 @@
                                     {:start-angle    (scale start-pos)
                                      :participant-id (:participant-id next)
                                      :end-angle      (scale end-pos)})) features)))))
+(defn col->map [key col]
+  (reduce (fn [total next]
+            (assoc total (key next) next)) {} col))
+
+(reg-event-db
+  :shape-superfam-features
+  (fn [db]
+    (let [current-view      (col->map :interactorRef (vals (get-in db [:views :entities])))
+          superfam-features (get-in db [:fts :superfamily])]
+      (assoc-in db [:views :superfamily]
+                (mapcat (fn [[feature-interactor feature-details]]
+                          (let [feature-details  (vals feature-details)
+                                participant-view (get-in current-view [(keyword feature-interactor)])
+                                scale            (radial-scale [0 (:length participant-view)]
+                                                               [(:start-angle participant-view) (:end-angle participant-view)])]
+                            (map (fn [{:keys [START END METHOD] :as feature}]
+                                   (if-not (= METHOD "Component")
+                                     {:start-angle (scale (js/parseInt START))
+                                      :end-angle   (scale (js/parseInt END))})) feature-details)))
+                        superfam-features)))))
 
 (reg-event-fx
   :success-fetch-complex
@@ -165,17 +186,10 @@
                           [:fetch-superfamily id label]) (identifiers response)))}))
 
 
-(defn parse-features [response]
-  (map (fn [line]
-         (.log js/console "line" line)
-         (.log js/console "split" (clojure.string/split line "\t"))
-         (clojure.string/split line "\t")) (clojure.string/split-lines response)))
-
 (reg-event-fx
   :success-fetch-length
   (fn [{db :db} [_ id label [{:keys [length]}]]]
     (let [new-db (assoc-in db [:lengths label] (js/parseInt length))]
-      (println "LENGTH" length)
       {:db       new-db
        :dispatch [:shape-entities]}
       #_(cond->
@@ -185,7 +199,6 @@
 (reg-event-fx
   :failure-fetch-length
   (fn [{db :db} [_ id label response]]
-    (println "FAIL" id)
     {:db       (assoc-in db [:lengths label] 20)
      :dispatch [:shape-entities]}))
 
@@ -215,7 +228,8 @@
 (reg-event-fx
   :success-fetch-superfamily
   (fn [{db :db} [_ id label response]]
-    {:db (assoc-in db [:fts :superfamily id] (parse-superfamily-features response))}))
+    ;(println "LABEL" id )
+    {:db (assoc-in db [:fts :superfamily label] (parse-superfamily-features response))}))
 
 
 (reg-event-fx
