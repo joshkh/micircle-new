@@ -8,7 +8,7 @@
   (fn [{:keys [start-angle end-angle]}]
     [:path.unknown {:d (math/describe-arc 200 200 150 (- start-angle 5) start-angle 15)}]))
 
-(defn protein []
+(defn protein-old []
   (let [flags (subscribe [:flags])]
     (fn [{:keys [label id interactorRef start-angle end-angle]}]
       [:g
@@ -34,9 +34,37 @@
                      :xlinkHref   (str "#entitytextpath" (name id))}
           label]]]])))
 
-(defn small-molecule []
+(defn adjust-binding-area [type-kw position-kw angle]
+  (case type-kw
+    :protein (case position-kw
+               :start (+ angle 5)
+               :end angle)
+    angle))
+
+(defn protein []
+  (let [flags (subscribe [:flags])]
+    (fn [{:keys [label id interactorRef start-angle end-angle]}]
+      [:g
+       [:g.arc
+        [:path.arc {:d (math/describe-arc
+                         0 0 200
+                         (adjust-binding-area :protein :start start-angle)
+                         (adjust-binding-area :protein :end end-angle)
+                         20)}]]
+       (into [:g.ticks]
+             (map (fn [interval]
+                    [:path.tick {:d (math/describe-tick 0 0 200 interval)}])
+                  (range (adjust-binding-area :protein :start start-angle)
+                         (adjust-binding-area :protein :end end-angle)
+                         5)))])))
+
+(defn small-molecule-old []
   (fn [{:keys [label id interactorRef start-angle end-angle]}]
     [:path.small-molecule {:d (math/describe-triangle 250 250 200 start-angle end-angle)}]))
+
+(defn small-molecule []
+  (fn [{:keys [label id interactorRef start-angle end-angle]}]
+    [:circle {:r 5}]))
 
 (defn feature []
   (let [flags   (subscribe [:flags])

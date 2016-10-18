@@ -19,10 +19,10 @@
   (first (s/select [:data s/ALL #(= "interaction" (:object %)) :participants] data)))
 
 (defn interactors [data]
-  (s/select [:data s/ALL #(= "interaction")] data))
+  (s/select [:data s/ALL #(= "interactor" (:object %))] data))
 
 (defn classes [data]
-  (s/select [:data s/ALL #(= "interactor")] data))
+  (s/select [:data s/ALL #(= "interactor") s/ALL] data))
 
 
 
@@ -174,8 +174,59 @@
                                       :end-angle   (scale (js/parseInt END))})) feature-details)))
                         superfam-features)))))
 
+(defn db-participants [db]
+  (get-in db [:model :participants]))
+
+(defn db-interactors [db]
+  (get-in db [:model :interactors]))
+
+
+
+
+(defn divide-circle-by-participant-lengths [participants]
+  (let [degree-scale-fn (partial degree-scale (apply + (map :length participants)))]
+    (->> participants
+         ; Scale each length to a range of 0-360
+         (map (fn [{:keys [length] :as participant}]
+                (assoc participant
+                  :start-angle 0
+                  :end-angle (degree-scale-fn length))))
+         ; Place them around the circle where the previous segment ends
+         (reduce (fn [total next]
+                   (let [previous (last total)]
+                     (conj total
+                           (-> next
+                               (update :start-angle (partial + (:end-angle previous)))
+                               (update :end-angle (partial + (:end-angle previous))))))) [])
+         (reduce (fn [total next] (assoc total (:id next) next)) {}))))
+
+(reg-event-fx
+  :calculate-views
+  (fn [{db :db}]
+    (let [participants (vals (db-participants db))]
+      ;TODO: Accept partitions so that participants can exist on different tiers
+      {:db (assoc-in db [:views :participants] (divide-circle-by-participant-lengths participants))})))
+
 (reg-event-fx
   :success-fetch-complex
+  (fn [{db :db} [_ complex-response]]
+    (let [interactor-map (->> (interactors complex-response) (col->map :id))
+          participants   (participants complex-response)]
+      {:db       (update-in db [:model] assoc
+                            ; Store a map of our interactors keyed on an "interactorRef" label
+                            :interactors interactor-map
+                            ; Store a map of our participants keyed on their numerical ids
+                            :participants (->> participants
+                                               (map (fn [{:keys [interactorRef label] :as p}]
+                                                      (assoc p
+                                                        :label label
+                                                        :type (get-in interactor-map [interactorRef :type :name])
+                                                        :length (count (get-in interactor-map [interactorRef :sequence])))))
+                                               (col->map :id)))
+       :dispatch [:calculate-views]})))
+
+(reg-event-fx
+  :success-fetch-complex-old
   (fn [{db :db} [_ response]]
     {:db         (assoc db :data response
                            :entity-map (vecmap->map [:id] (classes response)))

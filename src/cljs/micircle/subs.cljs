@@ -68,3 +68,8 @@
   (fn [db]
     (get-in db [:views :superfamily])))
 
+(reg-sub
+  :participant-views
+  (fn [db]
+    (get-in db [:views :participants])))
+
