@@ -48,17 +48,14 @@
                              (let [entity-map (get-in db [:entity-map])]
                                (reduce (fn [v p]
                                          (let [p-length (get-in db [:lengths (:interactorRef p)])
-                                               total    (apply + (map :length (vals v)))
-                                               type     (get-in entity-map [(:interactorRef p) :type :name])]
+                                               total    (apply + (map :length (vals v)))]
                                            (assoc v (keyword (:id p)) {:interactorRef (keyword (:interactorRef p))
                                                                        :id            (keyword (:id p))
                                                                        :length        p-length
                                                                        :type          (get-in entity-map [(:interactorRef p) :type :name])
                                                                        :label         (get-in interactors [(:interactorRef p) :label])
                                                                        :start-angle   (scale-fn total)
-                                                                       :end-angle     (case type
-                                                                                        "protein" (- (scale-fn (+ total p-length)) 0)
-                                                                                        "small molecule" (- (scale-fn (+ total p-length)) 0))})))
+                                                                       :end-angle     (- (scale-fn (+ total p-length)) 10)})))
                                        {}
                                        (participants (:data db)))))
        :dispatch-n [
@@ -102,47 +99,29 @@
                                from-participant-view (participant-id entity-views)
                                to-participant-view   (get entity-views (get-in feature-map [(-> linkedFeatures first keyword) :participant-id]))]
 
-                           ;(.log js/console "TEST" from-participant-view)
-
-
                            {:from          participant-id
                             :to            (get-in feature-map [(-> linkedFeatures first keyword) :participant-id])
                             :uid           (gensym)
                             :start-angle-1 (if (nil? from-pos-1)
-                                             (case (:type from-participant-view)
-                                               "protein" (- (:start-angle from-participant-view) 5)
-                                               "small molecule" (shortest-distance (:end-angle from-participant-view) (:start-angle from-participant-view))
-                                               nil)
-
+                                             (- (:start-angle from-participant-view) 5)
                                              ((radial-scale
                                                 [0 (:length from-participant-view)]
                                                 [(:start-angle from-participant-view) (:end-angle from-participant-view)])
                                                from-pos-1))
                             :start-angle-2 (if (nil? from-pos-2)
-                                             (case (:type from-participant-view)
-                                               "protein" (:start-angle from-participant-view)
-                                               "small molecule" (shortest-distance (:end-angle from-participant-view) (:start-angle from-participant-view))
-                                               nil)
-
+                                             (:start-angle from-participant-view)
                                              ((radial-scale
                                                 [0 (:length from-participant-view)]
                                                 [(:start-angle from-participant-view) (:end-angle from-participant-view)])
                                                from-pos-2))
                             :end-angle-1   (if (nil? to-pos-1)
-                                             (case (:type to-participant-view)
-                                               "protein" (- (:start-angle to-participant-view) 5)
-                                               "small molecule" (shortest-distance (:end-angle to-participant-view) (:start-angle to-participant-view))
-                                               nil)
+                                             (- (:start-angle to-participant-view) 5)
                                              ((radial-scale
                                                 [0 (:length to-participant-view)]
                                                 [(:start-angle to-participant-view) (:end-angle to-participant-view)])
                                                to-pos-1))
                             :end-angle-2   (if (nil? to-pos-2)
-                                             (case (:type to-participant-view)
-                                               "protein" (:start-angle to-participant-view)
-                                               "small molecule" (shortest-distance (:end-angle to-participant-view) (:start-angle to-participant-view))
-                                               nil)
-
+                                             (:start-angle to-participant-view)
                                              ((radial-scale
                                                 [0 (:length to-participant-view)]
                                                 [(:start-angle to-participant-view) (:end-angle to-participant-view)])

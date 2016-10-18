@@ -31,18 +31,15 @@
        [:g.label
         [:text.label {:text-anchor "middle"}
          [:textPath {:startOffset "50%"
-                     :xlinkHref   (str "#entitytextpath" (name id))}
+                     :xlinkHref (str "#entitytextpath" (name id))}
           label]]]])))
 
 (defn small-molecule []
   (fn [{:keys [label id interactorRef start-angle end-angle]}]
-    (let [{x :x y :y} (math/place-at-radius 250 250 210 (/ (+ start-angle end-angle) 2 ))]
-      [:g {:transform (str "translate(" x "," y ")")}
-       [:path.small-molecule {:d (math/describe-triangle 250 250 200 start-angle end-angle)}]])
-    ))
+    [:path.small-molecule {:d (math/describe-triangle 250 250 200 start-angle end-angle)}]))
 
 (defn feature []
-  (let [flags   (subscribe [:flags])
+  (let [flags (subscribe [:flags])
         options (subscribe [:options])]
     (fn [{:keys [color participant-id start-angle end-angle]}]
       [:g
@@ -54,3 +51,7 @@
                                              (if (:inline-features @options)
                                                210
                                                225) start-angle end-angle 10)}]])))
+
+(defn a-feature [parent id {:keys [TYPE START END]} ]
+  (fn []
+    [:div "done"]))

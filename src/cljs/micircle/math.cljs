@@ -105,6 +105,19 @@
     (clojure.string/join " " ["M" (:x start) (:y start)
                               "L" (:x end) (:y end)])))
 
+
+
+#_(defn describe-arc
+    [x y radius start-angle end-angle]
+    (let [start          (polar-to-cartesian x y radius end-angle)
+          end            (polar-to-cartesian x y radius start-angle)
+          large-arc-flag (if (<= (- end-angle start-angle) 180) 0 1)]
+      (clojure.string/join " " ["M" (:x start) (:y start)
+                                "A" radius radius 0 large-arc-flag 0 (:x end) (:y end)
+                                "L" (:x (polar-to-cartesian x y (+ radius 10) start-angle)) (:y (polar-to-cartesian x y (+ radius 10) start-angle))
+                                "A" radius radius 0 large-arc-flag 0 (:x end) (:y end)
+                                ])))
+
 (defn place-at-radius [center-x center-y radius angle]
   (polar-to-cartesian center-x center-y radius angle))
 
