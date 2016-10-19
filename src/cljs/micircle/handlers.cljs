@@ -24,6 +24,12 @@
 (defn classes [data]
   (s/select [:data s/ALL #(= "interactor") s/ALL] data))
 
+(defn parse-pos [str-pos]
+  (map (fn [part]
+         (let [parsed (js/parseInt part)]
+           (if (js/isNaN parsed) nil parsed)))
+       (clojure.string/split str-pos "-")))
+
 
 
 (re-frame/reg-event-db
@@ -71,19 +77,16 @@
 ;             ) (get-in db [:views :entities])))
 ;    db))
 
-(defn parse-pos [str]
-  (map (fn [part] (let [parsed (js/parseInt part)] (if-not (js/isNaN parsed) parsed nil))) (clojure.string/split str "-")))
+;(defn parse-pos [str]
+;  (map (fn [part] (let [parsed (js/parseInt part)] (if-not (js/isNaN parsed) parsed nil))) (clojure.string/split str "-")))
 
-(defn radial-scale [[lower-domain upper-domain] [lower-range upper-range]]
+(defn radial-scale
+  "Returns a function that scales a domain to a range."
+  [[lower-domain upper-domain] [lower-range upper-range]]
   (fn [input]
     (let [percent (/ input (- upper-domain lower-domain))]
       (+ lower-range (* percent (- upper-range lower-range))))))
 
-(defn shortest-distance [d1 d2]
-  (let [angle (mod (.abs js/Math (- d1 d2)) 360)]
-    (if (> angle 180)
-      (- 360 angle)
-      angle)))
 
 (reg-event-fx
   :shape-links
@@ -201,11 +204,31 @@
          (reduce (fn [total next] (assoc total (:id next) next)) {}))))
 
 (reg-event-fx
-  :calculate-views
+  :calculate-participant-views
   (fn [{db :db}]
     (let [participants (vals (db-participants db))]
       ;TODO: Accept partitions so that participants can exist on different tiers
-      {:db (assoc-in db [:views :participants] (divide-circle-by-participant-lengths participants))})))
+      {:db         (assoc-in db [:views :participants] (divide-circle-by-participant-lengths participants))
+       :dispatch [:calculate-feature-views]})))
+
+
+(reg-event-fx
+  :calculate-feature-views
+  (fn [{db :db}]
+    {:db (s/transform [:views :participants s/MAP-VALS
+                       (s/collect-one :length)
+                       (s/collect-one :start-angle)
+                       (s/collect-one :end-angle)
+                       :features s/ALL
+                       :sequenceData s/ALL]
+                      (fn [p-length p-start-angle p-end-angle sequence-data]
+                        ; Give each feature location a start and end angle relative to its parent
+                        (let [[start-pos end-pos] (parse-pos (:pos sequence-data))
+                              scale (radial-scale [0 p-length] [p-start-angle p-end-angle])]
+                          (assoc sequence-data :start-angle (scale start-pos) :end-angle (scale end-pos))))
+                      db)}))
+
+
 
 (reg-event-fx
   :success-fetch-complex
@@ -220,10 +243,14 @@
                                                (map (fn [{:keys [interactorRef label] :as p}]
                                                       (assoc p
                                                         :label label
+                                                        :iid (gensym)
                                                         :type (get-in interactor-map [interactorRef :type :name])
-                                                        :length (count (get-in interactor-map [interactorRef :sequence])))))
+                                                        ; If the interactor has a sequence then count it, otherwise default
+                                                        :length (if-let [sequence (get-in interactor-map [interactorRef :sequence])]
+                                                                  (count sequence)
+                                                                  30))))
                                                (col->map :id)))
-       :dispatch [:calculate-views]})))
+       :dispatch [:calculate-participant-views]})))
 
 (reg-event-fx
   :success-fetch-complex-old

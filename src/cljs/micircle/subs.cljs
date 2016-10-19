@@ -1,17 +1,17 @@
 (ns micircle.subs
-    (:require-macros [reagent.ratom :refer [reaction]])
-    (:require [re-frame.core :as re-frame :refer [reg-sub]]
-              [com.rpl.specter :as s]))
+  (:require-macros [reagent.ratom :refer [reaction]])
+  (:require [re-frame.core :as re-frame :refer [reg-sub]]
+            [com.rpl.specter :as s]))
 
 (re-frame/reg-sub
- :name
- (fn [db]
-   (:name db)))
+  :name
+  (fn [db]
+    (:name db)))
 
 (re-frame/reg-sub
- :active-panel
- (fn [db _]
-   (:active-panel db)))
+  :active-panel
+  (fn [db _]
+    (:active-panel db)))
 
 (reg-sub
   :proteins
@@ -32,16 +32,16 @@
   :participants
   (fn [db]
     (first (s/select [:data
-                :data
-                s/ALL
-                #(= "interaction" (:object %))
-                :participants]
-               db))))
+                      :data
+                      s/ALL
+                      #(= "interaction" (:object %))
+                      :participants]
+                     db))))
 
 (reg-sub
   :views
   (fn [db]
-    (vals (:entities (:views db)))))
+    (:participants (:views db))))
 
 (reg-sub
   :features
@@ -72,4 +72,25 @@
   :participant-views
   (fn [db]
     (get-in db [:views :participants])))
+
+
+
+(reg-sub
+  :link
+  (fn [db [_ from-id to-id]]
+    ; The JSON returns string values. If you can't beat them, join them.
+    (let [[from-id to-id] (map str [from-id to-id])
+          from-participant (get-in db [:views :participants from-id])
+          to-participant   (get-in db [:views :participants from-id])]
+      from-participant)))
+
+(defn radial-scale [[lower-domain upper-domain] [lower-range upper-range]]
+  (fn [input]
+    (let [percent (/ input (- upper-domain lower-domain))]
+      (+ lower-range (* percent (- upper-range lower-range))))))
+
+(reg-sub
+  :feature
+  (fn [db]
+    1))
 

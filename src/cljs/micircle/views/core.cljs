@@ -46,7 +46,7 @@
 (defn def [d]
   (let [options (subscribe [:options])]
     [:path {:id (str "entitytextpath" (name (:id d)))
-            :d  (math/describe-arc-text-path 250 250
+            :d  (math/describe-arc-text-path 0 0
                                              (if (:inline-features @options)
                                                230
                                                240) (:start-angle d) (:end-angle d))}]))
@@ -59,9 +59,10 @@
         features          (subscribe [:features])
         participants      (subscribe [:participants])
         superfam          (subscribe [:superfamily-features])
-        participant-views (subscribe [:participant-views])]
+        participant-views (subscribe [:participant-views])
+        link              (subscribe [:link 1 9])]
     (fn []
-      (.log js/console "done" @participant-views)
+      (.log js/console "link" @link)
       (let [pallete (cc/gradient :red :blue (count @link-views))]
         [:svg.micircle {:width "500" :height "500"}
          [:g {:transform "translate(250,250)"}
@@ -72,7 +73,7 @@
                          "small molecule" [entities/small-molecule entity]
                          nil)) (vals @participant-views)))]
 
-         #_(into [:defs] (map (fn [d] [def d]) @views))
+         (into [:defs] (map (fn [d] [def d]) (vals @views)))
          #_(into [:g.links] (map-indexed (fn [idx link]
                                            [links/link (assoc link :radius 200
                                                                    :color (nth pallete idx)) @options]) @link-views))

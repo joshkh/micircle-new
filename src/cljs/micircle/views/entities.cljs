@@ -34,16 +34,43 @@
                      :xlinkHref   (str "#entitytextpath" (name id))}
           label]]]])))
 
-(defn adjust-binding-area [type-kw position-kw angle]
+(defn translate-str [{:keys [x y]}]
+  (str "translate(" x "," y ")"))
+
+(defn adjust-binding-area
+  ; Determine which part of a view is the binding region.
+  ; We do this because some views, such as a protein, may have a binding region
+  ; section as well as a "unknown" region at the beginning or end.
+  [type-kw position-kw angle]
   (case type-kw
     :protein (case position-kw
-               :start (+ angle 5)
-               :end angle)
+               :start (+ angle 2)
+               :end (- angle 2))
     angle))
+
+
+(defn pack
+  [element component items]
+  (into element
+        (map (fn [i]
+               [component i]) items)))
+
+
+(defn radial-features [feature]
+  (into [:g]
+        (map (fn [{:keys [start-angle end-angle pos]}]
+               ; Only show features that have locations
+               (if (not= pos "?-?")
+                 [:path.feature {:d (math/describe-arc
+                                      0 0 200
+                                      (adjust-binding-area :protein :start start-angle)
+                                      (adjust-binding-area :protein :end end-angle)
+                                      10)}])) (:sequenceData feature))))
+
 
 (defn protein []
   (let [flags (subscribe [:flags])]
-    (fn [{:keys [label id interactorRef start-angle end-angle]}]
+    (fn [{:keys [label id interactorRef start-angle end-angle] :as participant}]
       [:g
        [:g.arc
         [:path.arc {:d (math/describe-arc
@@ -51,20 +78,29 @@
                          (adjust-binding-area :protein :start start-angle)
                          (adjust-binding-area :protein :end end-angle)
                          20)}]]
+       (pack [:g.features] radial-features (:features participant))
+
        (into [:g.ticks]
              (map (fn [interval]
-                    [:path.tick {:d (math/describe-tick 0 0 200 interval)}])
-                  (range (adjust-binding-area :protein :start start-angle)
+                    [:path.tick {:d (math/describe-tick 0 0 215 interval)}])
+                  (range (+ 5 (adjust-binding-area :protein :start start-angle))
                          (adjust-binding-area :protein :end end-angle)
-                         5)))])))
+                         5)))
+       [:g.label
+        [:text.label {:text-anchor "middle"}
+         [:textPath {:startOffset "50%"
+                     :xlinkHref   (str "#entitytextpath" (name id))}
+          "Test Label"]]]])))
 
-(defn small-molecule-old []
-  (fn [{:keys [label id interactorRef start-angle end-angle]}]
-    [:path.small-molecule {:d (math/describe-triangle 250 250 200 start-angle end-angle)}]))
 
 (defn small-molecule []
   (fn [{:keys [label id interactorRef start-angle end-angle]}]
-    [:circle {:r 5}]))
+    (let [xy (math/place-at-radius 0 0 210 start-angle end-angle)]
+      [:g {:transform (translate-str xy)}
+       [:circle.small-molecule {:r 10 :cx 0 :cy 0}]
+       ;[:path {:d (math/triangle-path)}]
+       ])))
+
 
 (defn feature []
   (let [flags   (subscribe [:flags])

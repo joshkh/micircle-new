@@ -118,8 +118,20 @@
                                 "A" radius radius 0 large-arc-flag 0 (:x end) (:y end)
                                 ])))
 
-(defn place-at-radius [center-x center-y radius angle]
-  (polar-to-cartesian center-x center-y radius angle))
+(defn shortest-distance [d1 d2]
+  (let [angle (mod (.abs js/Math (- d1 d2)) 360)]
+    (if (> angle 180)
+      (- 360 angle)
+      angle)))
+
+(defn triangle-path []
+  (clojure.string/join " " ["M" 12 0
+                            "L" 24 24
+                            "L" 0 24
+                            "Z"]))
+
+(defn place-at-radius [center-x center-y radius start-angle end-angle]
+  (polar-to-cartesian center-x center-y radius (/ (+ start-angle end-angle) 2)))
 
 
 (defn describe-triangle [center-x center-y radius start-angle end-angle & [thickness]]
