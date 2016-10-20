@@ -70,7 +70,7 @@
 
 (defn protein []
   (let [flags (subscribe [:flags])]
-    (fn [{:keys [label id interactorRef start-angle end-angle] :as participant}]
+    (fn [{:keys [features label id interactorRef start-angle end-angle] :as participant}]
       [:g
        [:g.arc
         [:path.arc {:d (math/describe-arc
@@ -78,7 +78,7 @@
                          (adjust-binding-area :protein :start start-angle)
                          (adjust-binding-area :protein :end end-angle)
                          20)}]]
-       (pack [:g.features] radial-features (:features participant))
+       (pack [:g.features] radial-features (vals features))
 
        (into [:g.ticks]
              (map (fn [interval]

@@ -219,15 +219,20 @@
                        (s/collect-one :length)
                        (s/collect-one :start-angle)
                        (s/collect-one :end-angle)
-                       :features s/ALL
+                       :features s/MAP-VALS
                        :sequenceData s/ALL]
                       (fn [p-length p-start-angle p-end-angle sequence-data]
                         ; Give each feature location a start and end angle relative to its parent
                         (let [[start-pos end-pos] (parse-pos (:pos sequence-data))
                               scale (radial-scale [0 p-length] [p-start-angle p-end-angle])]
                           (assoc sequence-data :start-angle (scale start-pos) :end-angle (scale end-pos))))
-                      db)}))
+                      db)
+     :dispatch [:calculate-link-views]}))
 
+(reg-event-fx
+  :calculate-link-views
+  (fn [{db :db}]
+    {:db db}))
 
 
 (reg-event-fx
@@ -240,10 +245,11 @@
                             :interactors interactor-map
                             ; Store a map of our participants keyed on their numerical ids
                             :participants (->> participants
-                                               (map (fn [{:keys [interactorRef label] :as p}]
+                                               (map (fn [{:keys [interactorRef label features] :as p}]
                                                       (assoc p
                                                         :label label
                                                         :iid (gensym)
+                                                        :features (vecmap->map [:id] features)
                                                         :type (get-in interactor-map [interactorRef :type :name])
                                                         ; If the interactor has a sequence then count it, otherwise default
                                                         :length (if-let [sequence (get-in interactor-map [interactorRef :sequence])]
