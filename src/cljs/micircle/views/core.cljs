@@ -51,6 +51,14 @@
                                                230
                                                240) (:start-angle d) (:end-angle d))}]))
 
+(defn links []
+  (let [all-features (subscribe [:all-features])
+        participants (subscribe [:participant-views])]
+    (into [:g.links]
+          (map (fn [participant]
+                 [links/feature-group participant @all-features])
+               (take 1 (vals @participants))))))
+
 
 (defn svg []
   (let [views             (subscribe [:views])
@@ -59,10 +67,9 @@
         features          (subscribe [:features])
         participants      (subscribe [:participants])
         superfam          (subscribe [:superfamily-features])
-        participant-views (subscribe [:participant-views])
-        link              (subscribe [:link 1 9])]
+        participant-views (subscribe [:participant-views])]
     (fn []
-      (.log js/console "link" @link)
+      ;(.log js/console "link" @link)
       (let [pallete (cc/gradient :red :blue (count @link-views))]
         [:svg.micircle {:width "500" :height "500"}
          [:g {:transform "translate(250,250)"}
@@ -71,9 +78,11 @@
                        (case type
                          "protein" [entities/protein entity]
                          "small molecule" [entities/small-molecule entity]
-                         nil)) (vals @participant-views)))]
+                         nil)) (vals @participant-views)))
+          [links]]
 
          (into [:defs] (map (fn [d] [def d]) (vals @views)))
+
          #_(into [:g.links] (map-indexed (fn [idx link]
                                            [links/link (assoc link :radius 200
                                                                    :color (nth pallete idx)) @options]) @link-views))

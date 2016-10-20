@@ -1,4 +1,5 @@
-(ns micircle.math)
+(ns micircle.math
+  (:require [com.rpl.specter :as s]))
 
 (def pi (.-PI js/Math))
 
@@ -73,6 +74,80 @@
                               "Q" 250 250 (:x anchor-start-1) (:y anchor-start-1)
                               "C" (:x inner-handle-start-1) (:y inner-handle-start-1) (:x outer-handle-start-1) (:y outer-handle-start-1) (:x start-1) (:y start-1)
                               "Z"])))
+
+(defn svg-arc [radius start end]
+  (let [large-arc-flag (if (<= (- (get-in end [:end-angle]) (get-in start [:start-angle])) 180) 0 1)]
+    ["A" radius radius 0 large-arc-flag 1 (:x end) (:y end)]))
+
+(defn svg-move-to [{:keys [x y]}]
+  ["M" x y])
+
+(defn svg-line-to [{:keys [x y]}]
+  ["L" x y])
+
+(defn svg-quad-curve [{ctrl-x :x ctrl-y :y} {:keys [x y] :as end}]
+  ["Q" ctrl-x ctrl-y x y])
+
+(defn svg-close []
+  ["Z"])
+
+
+(def min-max (juxt (partial apply min) (partial apply max)))
+
+(defn center-angle-of-participants [feature]
+  (let [angles (s/select [:sequenceData s/ALL (s/multi-path :start-angle :end-angle)] feature)]
+    (/ (apply + (min-max angles)) 2)))
+
+(defn build-link-path [center-x center-y radius {:keys [from-feature to-features] :as all}]
+
+  (let [starting-locations (sort-by :start-angle (map #(select-keys % [:start-angle :end-angle]) (get from-feature :sequenceData)))
+        ending-locations (sort-by :start-angle (map #(select-keys % [:start-angle :end-angle]) (get (first to-features) :sequenceData)))]
+
+    (let [p->c               (partial polar-to-cartesian center-x center-y radius)
+          starting-locations (map (fn [{:keys [start-angle end-angle] :as m}]
+                                    (assoc {}
+                                      :start (assoc (p->c start-angle) :start-angle start-angle)
+                                      :end (assoc (p->c end-angle) :end-angle end-angle))) starting-locations)
+          ending-locations (map (fn [{:keys [start-angle end-angle] :as m}]
+                                  (assoc {}
+                                    :start (assoc (p->c start-angle) :start-angle start-angle)
+                                    :end (assoc (p->c end-angle) :end-angle end-angle))) ending-locations)
+          center-angle (center-angle-of-participants from-feature)
+          control-point (polar-to-cartesian 0 0 100 center-angle)
+          control-point-left (polar-to-cartesian 0 0 100 (- center-angle 20))]
+
+
+
+      (let [sections [(svg-move-to (:start (first starting-locations)))
+                      (svg-arc radius
+                               (:start (first starting-locations))
+                               (:end (first starting-locations)))
+                      ;[(svg-line-to control-point)]
+                      [(svg-quad-curve control-point-left control-point)]
+                      (if-not (empty? (rest starting-locations))
+                        (map (fn [[next remaining]]
+                               [(svg-line-to (:start next))
+                                (svg-arc radius
+                                         (:start next)
+                                         (:end next))])
+                            (take-while not-empty (iterate rest (rest starting-locations)))))
+                      (svg-line-to (:start (first ending-locations)))
+                      (svg-arc radius
+                               (:start (first ending-locations))
+                               (:end (first ending-locations)))
+
+                      #_(svg-arc radius
+                               (:start (first starting-locations))
+                               (:end (first starting-locations)))
+                      (svg-line-to control-point)
+                      ]]
+
+        (.log js/console "sections" sections)
+
+        (clojure.string/join " " (flatten sections))))))
+
+
+
 
 (defn describe-arc
   [x y radius start-angle end-angle & [thickness]]
@@ -160,4 +235,6 @@
                                 "L" (:x (polar-to-cartesian x y (+ radius 10) start-angle)) (:y (polar-to-cartesian x y (+ radius 10) start-angle))
                                 "A" radius radius 0 large-arc-flag 0 (:x end) (:y end)
                                 ])))
+
+
 

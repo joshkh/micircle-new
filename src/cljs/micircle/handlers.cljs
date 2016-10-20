@@ -6,7 +6,11 @@
             [ajax.core :as ajax :refer [GET POST]]
             [micircle.math :as math]
             [com.rpl.specter :as s]
-            [tubax.core :refer [xml->clj]]))
+            [tubax.core :refer [xml->clj]]
+            [taoensso.timbre :as timbre
+             :refer-macros (log  trace  debug  info  warn  error  fatal  report
+                                 logf tracef debugf infof warnf errorf fatalf reportf
+                                 spy get-env log-env)]))
 
 (defn vecmap->map [key v]
   (reduce (fn [total next]
@@ -208,26 +212,40 @@
   (fn [{db :db}]
     (let [participants (vals (db-participants db))]
       ;TODO: Accept partitions so that participants can exist on different tiers
-      {:db         (assoc-in db [:views :participants] (divide-circle-by-participant-lengths participants))
+      {:db       (assoc-in db [:views :participants] (divide-circle-by-participant-lengths participants))
        :dispatch [:calculate-feature-views]})))
 
 
 (reg-event-fx
   :calculate-feature-views
   (fn [{db :db}]
-    {:db (s/transform [:views :participants s/MAP-VALS
-                       (s/collect-one :length)
-                       (s/collect-one :start-angle)
-                       (s/collect-one :end-angle)
-                       :features s/MAP-VALS
-                       :sequenceData s/ALL]
-                      (fn [p-length p-start-angle p-end-angle sequence-data]
-                        ; Give each feature location a start and end angle relative to its parent
-                        (let [[start-pos end-pos] (parse-pos (:pos sequence-data))
-                              scale (radial-scale [0 p-length] [p-start-angle p-end-angle])]
-                          (assoc sequence-data :start-angle (scale start-pos) :end-angle (scale end-pos))))
-                      db)
-     :dispatch [:calculate-link-views]}))
+    {:db       (s/transform [:views :participants s/MAP-VALS
+                             (s/collect-one :length)
+                             (s/collect-one :start-angle)
+                             (s/collect-one :end-angle)
+                             :features s/MAP-VALS
+                             :sequenceData s/ALL]
+                            (fn [p-length p-start-angle p-end-angle sequence-data]
+                              ; Give each feature location a start and end angle relative to its parent
+                              (let [[start-pos end-pos] (parse-pos (:pos sequence-data))
+                                    scale (radial-scale [0 p-length] [p-start-angle p-end-angle])]
+                                (assoc sequence-data :start-angle (scale start-pos) :end-angle (scale end-pos))))
+                            db)
+     :dispatch [:build-feature-map]}))
+
+(reg-event-fx
+  :build-feature-map
+  (fn [{db :db}]
+    ; Create a map of features where key is feature id, value is participant id.
+    (let [feature-map (->>
+                        (s/select [:views :participants s/MAP-VALS (s/collect-one :id)
+                                   :features s/MAP-VALS :id] db)
+                        (into {} (map (fn [pair] (into [] (reverse pair))))))
+          features    (into {} (s/select [:views :participants s/MAP-VALS :features] db))]
+      {:db (assoc db
+             :feature-map feature-map
+             :features features)
+       :dispatch [:calculate-link-views]})))
 
 (reg-event-fx
   :calculate-link-views
@@ -245,11 +263,11 @@
                             :interactors interactor-map
                             ; Store a map of our participants keyed on their numerical ids
                             :participants (->> participants
-                                               (map (fn [{:keys [interactorRef label features] :as p}]
+                                               (map (fn [{:keys [id interactorRef label features] :as p}]
                                                       (assoc p
                                                         :label label
                                                         :iid (gensym)
-                                                        :features (vecmap->map [:id] features)
+                                                        :features (vecmap->map [:id] (map #(assoc % :participant-id id) features))
                                                         :type (get-in interactor-map [interactorRef :type :name])
                                                         ; If the interactor has a sequence then count it, otherwise default
                                                         :length (if-let [sequence (get-in interactor-map [interactorRef :sequence])]

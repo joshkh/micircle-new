@@ -15,7 +15,7 @@
        [:div (json-html/edn->hiccup
                ;@app-db
                ;(select-keys @app-db [:views :lengths :feature-map :link-views])
-               (select-keys @app-db [:model :views])
+               (select-keys @app-db [:model :views :features])
                )]
        ])))
 

@@ -10,10 +10,11 @@
                  [ring "1.4.0"]
                  [cljs-ajax "0.5.8"]
                  [day8.re-frame/http-fx "0.0.4"]
-                 [com.rpl/specter "0.13.0"]
+                 [com.rpl/specter "0.13.1-SNAPSHOT"]
                  [json-html "0.4.0"]
                  [funcool/tubax "0.2.0"]
-                 [rm-hull/inkspot "0.2.1"]]
+                 [rm-hull/inkspot "0.2.1"]
+                 [com.taoensso/timbre "4.7.4"]]
 
   :plugins [[lein-cljsbuild "1.1.4"]
             [lein-less "1.7.5"]]

@@ -94,3 +94,13 @@
   (fn [db]
     1))
 
+(reg-sub
+  :feature-map
+  (fn [db]
+    (get db :feature-map)))
+
+(reg-sub
+  :all-features
+  (fn [db]
+    (get db :features)))
+
