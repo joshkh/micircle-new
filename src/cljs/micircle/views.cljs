@@ -1,7 +1,9 @@
 (ns micircle.views
   (:require [re-frame.core :as re-frame]
             [micircle.views.core :as main]
-            [json-html.core :as json-html]))
+            [json-html.core :as json-html]
+            [micircle.views.drag :as drag]
+            ))
 
 
 ;; home
@@ -11,8 +13,9 @@
         app-db (re-frame/subscribe [:app-db])]
     (fn []
       [:div
+       [drag/main]
        [main/main]
-       [:div (json-html/edn->hiccup
+       #_[:div (json-html/edn->hiccup
                ;@app-db
                ;(select-keys @app-db [:views :lengths :feature-map :link-views])
                (select-keys @app-db [:model :views :features])

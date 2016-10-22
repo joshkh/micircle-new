@@ -1,6 +1,8 @@
 (ns micircle.views.links
   (:require [re-frame.core :as re-frame :refer [subscribe dispatch]]
-            [micircle.math :as math]))
+            [micircle.math :as math]
+            [reagent.core :as reagent]
+            [svge.components :as components]))
 
 
 (defn linkold []
@@ -21,17 +23,58 @@
                                                  :end-angle-1   end-angle-1
                                                  :end-angle-2   end-angle-2} options)}])))
 
+
+
+(defn parse-matrix
+  "Parses a string representing a matrix transform:
+  matrix(1 0 0 1 0 0) => (1 0 0 1 0 0"
+  [matrix-string]
+  (into [] (map int (map first (partition 2 (drop 7 matrix-string))))))
+
+(defn select-element [state-atom evt]
+  (swap! state-atom assoc
+         :selected? true
+         :current-x (.. evt -clientX)
+         :current-y (.. evt -clientY)))
+
+(defn deselect-element [state-atom evt]
+  (swap! state-atom assoc :selected? false))
+
+(defn move-element [state-atom evt]
+  (if (:selected? @state-atom)
+    (let [{:keys [matrix current-x current-y]} @state-atom
+          client-x (.. evt -clientX)
+          client-y (.. evt -clientY)
+          dx (- client-x current-x)
+          dy (- client-y current-y)]
+      (swap! state-atom assoc
+             :current-x client-x
+             :current-y client-y
+             :matrix (-> matrix (update 4 + dx) (update 5 + dy))))))
+
+(defn control-point []
+  (let [state (reagent/atom {:matrix [1 0 0 1 0 0]})]
+    (fn []
+      [:circle.control-point
+       {:r             10
+        :transform     (str "matrix(" (clojure.string/join " " (:matrix @state)) ")")
+        :on-mouse-down (partial select-element state)
+        :on-mouse-up   (partial deselect-element state)
+        :on-mouse-move (partial move-element state)
+        :cx            0
+        :cy            0}])))
+
 (defn link []
   (fn [{:keys [from-feature to-features] :as all}]
     (if from-feature
       (let [control-point-pos (math/place-at-radius
-                               0 0 100
-                               (math/center-angle-of-participants from-feature)
-                               (math/center-angle-of-participants from-feature))]
-       [:g
-        [:circle.control-point {:r 5 :cx (:x control-point-pos) :cy (:y control-point-pos)}]
-        [:path.link
-         {:d (math/build-link-path 0 0 190 all)}]])
+                                0 0 100
+                                (math/center-angle-of-participants from-feature)
+                                (math/center-angle-of-participants from-feature))]
+        [:g
+                  ;[:circle.control-point {:r 5 :cx (:x control-point-pos) :cy (:y control-point-pos)}]
+         [:path.link
+          {:d (math/build-link-path 0 0 190 all)}]])
       [:g])))
 
 (defn feature-group []

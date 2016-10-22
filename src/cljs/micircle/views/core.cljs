@@ -3,7 +3,9 @@
             [micircle.views.entities :as entities]
             [micircle.views.links :as links]
             [micircle.math :as math]
-            [inkspot.color-chart :as cc]))
+            [inkspot.color-chart :as cc]
+            [svge.components :as c]
+            [svge.factory :as f]))
 
 
 (defn controls []
@@ -79,9 +81,36 @@
                          "protein" [entities/protein entity]
                          "small molecule" [entities/small-molecule entity]
                          nil)) (vals @participant-views)))
-          [links]]
+          [links]
+
+          #_[:path.link {:d (c/make-path
+                              [:move-to 0 10]
+                              [:line-to 30 20]
+                              [:line-to 0 40]
+                              [:circle-arc-to 30 1 1 -50 -30])}]
+
+          (let [p [
+                   [:move-to {:x 0 :y 0}]
+                   [:line-to {:x 20 :y 10}]
+                   [:line-to {:x 40 :y 30}]
+                   [:line-to {:x 60 :y -20}]
+                   [:line-to {:x 80 :y 5}]
+
+                   ]]
+            [:g
+             [:path.link {:d (apply c/make-path p)}]
+             [:g (apply c/annotate-path p)]])]
+
+         ;[radius radius n large-arc-flag p x y]
+
+         ;(c/make-path
+         ;  (f/move-to 0 10)
+         ;  (f/line-to 30 20)
+         ;  (f/line-to 0 40)
+         ;  (f/close))
 
          (into [:defs] (map (fn [d] [def d]) (vals @views)))
+
 
          #_(into [:g.links] (map-indexed (fn [idx link]
                                            [links/link (assoc link :radius 200
@@ -104,3 +133,27 @@
          [svg]]
         [:div.col-sm-4
          [controls]]]])))
+
+
+
+;(let [p [
+;         ;[:move-to {:x 0 :y 0}]
+;         ;[:circle-arc-to {:pos :relative
+;         ;                 :x              -40
+;         ;                 :y              -20
+;         ;                 :radius         1
+;         ;                 :large-arc-flag 1
+;         ;                 :sweep-flag     0}]
+;         ;[:radiate-out {:distance 10}]
+;         ;[:circle-arc-to {:pos :relative
+;         ;                 :x              50
+;         ;                 :y              0
+;         ;                 :radius         10
+;         ;                 :large-arc-flag 1
+;         ;                 :sweep-flag     1}]
+;         [:move-to {:x 0 :y 0}]
+;
+;         ]]
+;  [:g
+;   [:path.link {:d (apply c/make-path p)}]
+;   [:g (apply c/annotate-path p)]])

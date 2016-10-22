@@ -60,10 +60,17 @@ circle.small-molecule {
   transition: all 0.2s ease;
 }
 circle.control-point {
-  fill: none;
+  fill: red;
   stroke: red;
   opacity: 0.6;
-  stroke-width: 1px;
+  stroke-width: 0px;
+}
+svg text {
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .jh-root,
 .jh-type-object,
