@@ -73,8 +73,12 @@
                                 (math/center-angle-of-participants from-feature))]
         [:g
                   ;[:circle.control-point {:r 5 :cx (:x control-point-pos) :cy (:y control-point-pos)}]
+         (.log js/console "doing" (math/build-link-path 0 0 190 all))
          [:path.link
-          {:d (math/build-link-path 0 0 190 all)}]])
+          {:d (math/build-link-path 0 0 190 all)}]
+         (let [{cx :x cy :y} (math/centroid 0 0 190 all)]
+           [:circle.control-point {:r 3 :cx cx :cy cy}])
+         ])
       [:g])))
 
 (defn feature-group []

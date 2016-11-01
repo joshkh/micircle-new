@@ -89,7 +89,7 @@
                               [:line-to 0 40]
                               [:circle-arc-to 30 1 1 -50 -30])}]
 
-          (let [p [
+          #_(let [p [
                    [:move-to {:x 0 :y 0}]
                    [:line-to {:x 20 :y 10}]
                    [:line-to {:x 40 :y 30}]
@@ -99,7 +99,8 @@
                    ]]
             [:g
              [:path.link {:d (apply c/make-path p)}]
-             [:g (apply c/annotate-path p)]])]
+             [:g (apply c/annotate-path p)]])
+          ]
 
          ;[radius radius n large-arc-flag p x y]
 

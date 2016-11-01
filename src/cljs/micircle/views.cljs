@@ -13,7 +13,7 @@
         app-db (re-frame/subscribe [:app-db])]
     (fn []
       [:div
-       [drag/main]
+       ;[drag/main]
        [main/main]
        #_[:div (json-html/edn->hiccup
                ;@app-db

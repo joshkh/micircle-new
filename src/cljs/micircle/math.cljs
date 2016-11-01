@@ -98,55 +98,194 @@
   (let [angles (s/select [:sequenceData s/ALL (s/multi-path :start-angle :end-angle)] feature)]
     (/ (apply + (min-max angles)) 2)))
 
+(defn pinchold [{:keys [angle]} radius]
+  (let [pc      (partial polar-to-cartesian 0 0)
+        pinched (pc (- radius 10) (- angle 5))
+        bow-out (pc (- radius 20) (- angle 1))]
+    ["Q" (:x pinched) (:y pinched) (:x bow-out) (:y bow-out)]))
+
+
+
+
+(defn build-link-path-old [center-x center-y radius {:keys [from-feature to-features] :as all}]
+
+  (let [starting-locations (sort-by :start-angle (map #(select-keys % [:start-angle :end-angle]) (get from-feature :sequenceData)))
+        ending-locations   (sort-by :start-angle (map #(select-keys % [:start-angle :end-angle]) (get (first to-features) :sequenceData)))]
+
+
+    (let [p->c                             (partial polar-to-cartesian center-x center-y radius)
+          pc                               (partial polar-to-cartesian center-x center-y)
+          starting-locations               (map (fn [{:keys [start-angle end-angle] :as m}]
+                                                  (assoc {}
+                                                    :start (assoc (p->c start-angle) :angle start-angle)
+                                                    :end (assoc (p->c end-angle) :angle end-angle))) starting-locations)
+          ending-locations                 (map (fn [{:keys [start-angle end-angle] :as m}]
+                                                  (assoc {}
+                                                    :start (assoc (p->c start-angle) :angle start-angle)
+                                                    :end (assoc (p->c end-angle) :angle end-angle))) ending-locations)
+          center-angle                     (center-angle-of-participants from-feature)
+          all-starting-locations-angles    (flatten (map (fn [n]
+                                                           [(get-in n [:start :angle])
+                                                            (get-in n [:end :angle])]) starting-locations))
+
+          all-ending-locations-angles      (flatten (map (fn [n]
+                                                           [(get-in n [:start :angle])
+                                                            (get-in n [:end :angle])]) ending-locations))
+
+          starting-locations-average-angle (/ (apply + all-starting-locations-angles) (count all-starting-locations-angles))
+          ending-locations-average-angle   (/ (apply + all-ending-locations-angles) (count all-ending-locations-angles))
+          center-point-between-all-angles  (/ (+ starting-locations-average-angle ending-locations-average-angle) 2)]
+
+      ;(.log js/console "starting-locations" starting-locations)
+      ;(.log js/console "ending-locations" ending-locations)
+      ;(.log js/console "done" center-point-between-all-angles)
+
+
+
+      (clojure.string/join
+        " "
+        (flatten [; Start at the very beginning of the first binding region
+                  "M" (:x (:start (first starting-locations))) (:y (:start (first starting-locations)))
+                  ; Arc to the end of the binding region
+                  "A" radius radius 0 0 1 (:x (:end (first starting-locations))) (:y (:end (first starting-locations)))
+                  ; Squeeze the ribbon near end for a tapered effect
+
+                  ;(pinch (:end (first starting-locations)) radius)
+
+
+                  ;"Q" (pc (- radius 30) (:y (:end (first starting-locations))))
+                  ; If we have another segment in this interaction then we need to repeatedly "sawtooth"
+                  ])))))
+
+
+(defn pinch [{:keys [angle]} radius]
+  (let [ptc           (partial polar-to-cartesian 0 0)
+        pinch-depth   75
+        pinch-percent 0.3
+        flare         30
+
+        pinch-at-1    (ptc (- radius 40) (- angle 5))
+        pinch-at-2    (ptc (- radius 40) (- angle 5))
+        end-at        (ptc (- radius 100) (+ angle 5))]
+    ["C" (:x pinch-at-1) (:y pinch-at-1) (:x pinch-at-2) (:y pinch-at-2) (:x end-at) (:y end-at)]))
+
+
 (defn build-link-path [center-x center-y radius {:keys [from-feature to-features] :as all}]
 
   (let [starting-locations (sort-by :start-angle (map #(select-keys % [:start-angle :end-angle]) (get from-feature :sequenceData)))
-        ending-locations (sort-by :start-angle (map #(select-keys % [:start-angle :end-angle]) (get (first to-features) :sequenceData)))]
-
-    (let [p->c               (partial polar-to-cartesian center-x center-y radius)
-          starting-locations (map (fn [{:keys [start-angle end-angle] :as m}]
-                                    (assoc {}
-                                      :start (assoc (p->c start-angle) :start-angle start-angle)
-                                      :end (assoc (p->c end-angle) :end-angle end-angle))) starting-locations)
-          ending-locations (map (fn [{:keys [start-angle end-angle] :as m}]
-                                  (assoc {}
-                                    :start (assoc (p->c start-angle) :start-angle start-angle)
-                                    :end (assoc (p->c end-angle) :end-angle end-angle))) ending-locations)
-          center-angle (center-angle-of-participants from-feature)
-          control-point (polar-to-cartesian 0 0 100 center-angle)
-          control-point-left (polar-to-cartesian 0 0 100 (- center-angle 20))]
+        ending-locations   (sort-by :start-angle (map #(select-keys % [:start-angle :end-angle]) (get (first to-features) :sequenceData)))]
 
 
+    (let [p->c                             (partial polar-to-cartesian center-x center-y radius)
+          pc                               (partial polar-to-cartesian center-x center-y)
+          starting-locations               (map (fn [{:keys [start-angle end-angle] :as m}]
+                                                  (assoc {}
+                                                    :start (assoc (p->c start-angle) :angle start-angle)
+                                                    :middle (assoc (p->c (/ (+ start-angle end-angle) 2)) :angle (/ (+ start-angle end-angle) 2))
+                                                    :end (assoc (p->c end-angle) :angle end-angle))) starting-locations)
+          ending-locations                 (map (fn [{:keys [start-angle end-angle] :as m}]
+                                                  (assoc {}
+                                                    :start (assoc (p->c start-angle) :angle start-angle)
+                                                    :middle (assoc (p->c (/ (+ start-angle end-angle) 2)) :angle (/ (+ start-angle end-angle) 2))
+                                                    :end (assoc (p->c end-angle) :angle end-angle))) ending-locations)
+          center-angle                     (center-angle-of-participants from-feature)
+          all-starting-locations-angles    (flatten (map (fn [n]
+                                                           [(get-in n [:start :angle])
+                                                            (get-in n [:end :angle])]) starting-locations))
 
-      (let [sections [(svg-move-to (:start (first starting-locations)))
-                      (svg-arc radius
-                               (:start (first starting-locations))
-                               (:end (first starting-locations)))
-                      ;[(svg-line-to control-point)]
-                      [(svg-quad-curve control-point-left control-point)]
-                      (if-not (empty? (rest starting-locations))
-                        (map (fn [[next remaining]]
-                               [(svg-line-to (:start next))
-                                (svg-arc radius
-                                         (:start next)
-                                         (:end next))])
+          all-ending-locations-angles      (flatten (map (fn [n]
+                                                           [(get-in n [:start :angle])
+                                                            (get-in n [:end :angle])]) ending-locations))
+          centroid                         (let [all-x      (map (comp :x :middle) (concat starting-locations ending-locations))
+                                                 all-y      (map (comp :y :middle) (concat starting-locations ending-locations))
+                                                 all-angles (map (comp :angle :middle) (concat starting-locations ending-locations))]
+                                             {:x     (/ (apply + all-x) (count all-x))
+                                              :y     (/ (apply + all-y) (count all-x))
+                                              :angle (/ (apply + all-angles) (count all-angles))})
+
+          starting-locations-average-angle (/ (apply + all-starting-locations-angles) (count all-starting-locations-angles))
+          ending-locations-average-angle   (/ (apply + all-ending-locations-angles) (count all-ending-locations-angles))
+          center-point-between-all-angles  (/ (+ starting-locations-average-angle ending-locations-average-angle) 2)]
+
+      ;(.log js/console "starting-locations" starting-locations)
+      ;(.log js/console "ending-locations" ending-locations)
+      ;;(.log js/console "done" center-point-between-all-angles)
+      ;
+      ;(.log js/console "REDUCTION"
+      ;      (reduce (fn [total [current next]]
+      ;                (apply conj total
+      ;                       [])) [] (take-while not-empty (iterate rest starting-locations))))
+      ;
+      ;(.log js/console "centroid" centroid)
+
+
+
+      (clojure.string/join
+        " "
+        (flatten [; Start at the very beginning of the first binding region
+                  "M" (:x (:start (first starting-locations))) (:y (:start (first starting-locations)))
+                  ; Arc to the end of the binding region
+                  "A" radius radius 0 0 1 (:x (:end (first starting-locations))) (:y (:end (first starting-locations)))
+
+
+
+                  (if (not-empty (rest starting-locations))
+                    (reduce (fn [total [current next]]
+                              (apply conj total ["A" radius radius 0 0 1 (:x (:start current)) (:y (:start current))]))
+                            ["A" radius radius 0 0 0 (:x centroid) (:y centroid)]
                             (take-while not-empty (iterate rest (rest starting-locations)))))
-                      (svg-line-to (:start (first ending-locations)))
-                      (svg-arc radius
-                               (:start (first ending-locations))
-                               (:end (first ending-locations)))
 
-                      #_(svg-arc radius
-                               (:start (first starting-locations))
-                               (:end (first starting-locations)))
-                      (svg-line-to control-point)
-                      ]]
+                  ["A" radius radius 0 0 0 (:x centroid) (:y centroid)]
+                  ; Squeeze the ribbon near end for a tapered effect
 
-        (.log js/console "sections" sections)
-
-        (clojure.string/join " " (flatten sections))))))
+                  ;(pinch (:end (first starting-locations)) radius)
 
 
+                  ;"Q" (pc (- radius 30) (:y (:end (first starting-locations))))
+                  ; If we have another segment in this interaction then we need to repeatedly "sawtooth"
+                  ]))
+
+      )))
+
+
+
+(defn centroid [center-x center-y radius {:keys [from-feature to-features] :as all}]
+
+  (let [starting-locations (sort-by :start-angle (map #(select-keys % [:start-angle :end-angle]) (get from-feature :sequenceData)))
+        ending-locations   (sort-by :start-angle (map #(select-keys % [:start-angle :end-angle]) (get (first to-features) :sequenceData)))]
+
+
+    (let [p->c                             (partial polar-to-cartesian center-x center-y radius)
+          pc                               (partial polar-to-cartesian center-x center-y)
+          starting-locations               (map (fn [{:keys [start-angle end-angle] :as m}]
+                                                  (assoc {}
+                                                    :start (assoc (p->c start-angle) :angle start-angle)
+                                                    :middle (assoc (p->c (/ (+ start-angle end-angle) 2)) :angle (/ (+ start-angle end-angle) 2))
+                                                    :end (assoc (p->c end-angle) :angle end-angle))) starting-locations)
+          ending-locations                 (map (fn [{:keys [start-angle end-angle] :as m}]
+                                                  (assoc {}
+                                                    :start (assoc (p->c start-angle) :angle start-angle)
+                                                    :middle (assoc (p->c (/ (+ start-angle end-angle) 2)) :angle (/ (+ start-angle end-angle) 2))
+                                                    :end (assoc (p->c end-angle) :angle end-angle))) ending-locations)
+          center-angle                     (center-angle-of-participants from-feature)
+          all-starting-locations-angles    (flatten (map (fn [n]
+                                                           [(get-in n [:start :angle])
+                                                            (get-in n [:end :angle])]) starting-locations))
+
+          all-ending-locations-angles      (flatten (map (fn [n]
+                                                           [(get-in n [:start :angle])
+                                                            (get-in n [:end :angle])]) ending-locations))
+          centroid                         (let [all-x      (map (comp :x :middle) (concat starting-locations ending-locations))
+                                                 all-y      (map (comp :y :middle) (concat starting-locations ending-locations))
+                                                 all-angles (map (comp :angle :middle) (concat starting-locations ending-locations))]
+                                             {:x     (/ (apply + all-x) (count all-x))
+                                              :y     (/ (apply + all-y) (count all-x))
+                                              :angle (/ (apply + all-angles) (count all-angles))})
+
+          starting-locations-average-angle (/ (apply + all-starting-locations-angles) (count all-starting-locations-angles))
+          ending-locations-average-angle   (/ (apply + all-ending-locations-angles) (count all-ending-locations-angles))
+          center-point-between-all-angles  (/ (+ starting-locations-average-angle ending-locations-average-angle) 2)]
+      centroid)))
 
 
 (defn describe-arc
@@ -238,3 +377,33 @@
 
 
 
+
+#_(let [sections [(svg-move-to (:start (first starting-locations)))
+                  (svg-arc radius
+                           (:start (first starting-locations))
+                           (:end (first starting-locations)))
+                  ;[(svg-line-to control-point)]
+                  [(svg-quad-curve control-point-left control-point)]
+                  (if-not (empty? (rest starting-locations))
+                    (map (fn [[next remaining]]
+                           [(svg-quad-curve control-point-left (:start next))
+                            ;(svg-line-to (:start next))
+                            (svg-arc radius
+                                     (:start next)
+                                     (:end next))])
+                         (take-while not-empty (iterate rest (rest starting-locations)))))
+                  ;(svg-line-to (:start (first ending-locations)))
+                  (svg-quad-curve control-point-left (:start (first ending-locations)))
+                  (svg-arc radius
+                           (:start (first ending-locations))
+                           (:end (first ending-locations)))
+
+                  #_(svg-arc radius
+                             (:start (first starting-locations))
+                             (:end (first starting-locations)))
+                  (svg-line-to control-point)
+                  ]]
+
+    (.log js/console "sections" sections)
+
+    (clojure.string/join " " (flatten sections)))
