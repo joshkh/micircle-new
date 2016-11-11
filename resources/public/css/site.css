@@ -23,8 +23,8 @@ path.unknown {
   stroke-width: 1px;
 }
 path.link {
+  fill: #bdbdbd;
   stroke: #b7b3b3;
-  fill: none;
   opacity: 0.5;
   stroke-width: 1px;
   transition: all 0.2s ease;

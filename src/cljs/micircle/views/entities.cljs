@@ -90,7 +90,7 @@
         [:text.label {:text-anchor "middle"}
          [:textPath {:startOffset "50%"
                      :xlinkHref   (str "#entitytextpath" (name id))}
-          "Test Label"]]]])))
+          label]]]])))
 
 
 (defn small-molecule []

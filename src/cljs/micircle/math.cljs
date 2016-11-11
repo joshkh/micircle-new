@@ -203,9 +203,13 @@
                                               :y     (/ (apply + all-y) (count all-x))
                                               :angle (/ (apply + all-angles) (count all-angles))})
 
+          half-centroid                    (pc 100 (:angle centroid))
+
           starting-locations-average-angle (/ (apply + all-starting-locations-angles) (count all-starting-locations-angles))
           ending-locations-average-angle   (/ (apply + all-ending-locations-angles) (count all-ending-locations-angles))
           center-point-between-all-angles  (/ (+ starting-locations-average-angle ending-locations-average-angle) 2)]
+
+      (println "HALF" half-centroid)
 
       ;(.log js/console "starting-locations" starting-locations)
       ;(.log js/console "ending-locations" ending-locations)
@@ -224,18 +228,32 @@
         " "
         (flatten [; Start at the very beginning of the first binding region
                   "M" (:x (:start (first starting-locations))) (:y (:start (first starting-locations)))
+
                   ; Arc to the end of the binding region
                   "A" radius radius 0 0 1 (:x (:end (first starting-locations))) (:y (:end (first starting-locations)))
 
 
-
+                  ; If we have another starting location then arc back to its beginning
                   (if (not-empty (rest starting-locations))
                     (reduce (fn [total [current next]]
-                              (apply conj total ["A" radius radius 0 0 1 (:x (:start current)) (:y (:start current))]))
-                            ["A" radius radius 0 0 0 (:x centroid) (:y centroid)]
+                              (apply conj total
+                                     ["A" radius radius 0 0 1 (:x (:start current)) (:y (:start current))
+                                      "A" radius radius 0 0 1 (:x (:end current)) (:y (:end current))]))
+                            ["A" radius radius 0 0 0 (:x half-centroid) (:y half-centroid)]
                             (take-while not-empty (iterate rest (rest starting-locations)))))
 
-                  ["A" radius radius 0 0 0 (:x centroid) (:y centroid)]
+                  ;"A" radius radius 0 0 0 (:x (:start (first ending-locations))) (:y (:start (first ending-locations)))
+
+                  "Q" (:x half-centroid) (:y half-centroid) (:x (:start (first ending-locations))) (:y (:start (first ending-locations)))
+
+                  ; Arc to the end of the binding region
+                  "A" radius radius 0 0 1 (:x (:end (first ending-locations))) (:y (:end (first ending-locations)))
+
+                  ;"Q" (:x centroid) (:y centroid) (:x (:start (first starting-locations))) (:y (:start (first starting-locations)))
+
+                  "Q" 0 0 (:x (:start (first starting-locations))) (:y (:start (first starting-locations)))
+
+                  ;["A" radius radius 0 0 0 (:x centroid) (:y centroid)]
                   ; Squeeze the ribbon near end for a tapered effect
 
                   ;(pinch (:end (first starting-locations)) radius)

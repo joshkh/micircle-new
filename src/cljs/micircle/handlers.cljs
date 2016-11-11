@@ -264,8 +264,10 @@
                             ; Store a map of our participants keyed on their numerical ids
                             :participants (->> participants
                                                (map (fn [{:keys [id interactorRef label features] :as p}]
+                                                      (.log js/console "LABEL IN HERE"
+                                                            (get-in interactor-map [interactorRef]))
                                                       (assoc p
-                                                        :label label
+                                                        :label (get-in interactor-map [interactorRef :label])
                                                         :iid (gensym)
                                                         :features (vecmap->map [:id] (map #(assoc % :participant-id id) features))
                                                         :type (get-in interactor-map [interactorRef :type :name])
