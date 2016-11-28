@@ -4,7 +4,7 @@
                  [reagent "0.6.0"]
                  [binaryage/devtools "0.8.2"]
                  [re-frame "0.8.0"]
-                 [secretary "1.2.3"]
+                 ;[secretary "1.2.3"]
                  [compojure "1.5.0"]
                  [yogthos/config "0.8"]
                  [ring "1.4.0"]

@@ -41,4 +41,6 @@
 (defn main-panel []
   (let [active-panel (re-frame/subscribe [:active-panel])]
     (fn []
-      [show-panel @active-panel])))
+      ;[show-panel @active-panel]
+      [home-panel]
+      )))

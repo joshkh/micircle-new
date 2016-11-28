@@ -130,7 +130,7 @@
                             "Z"])
   (let [thickness (if thickness thickness 20)
         {x :x y :y} (polar-to-cartesian center-x center-y (+ thickness radius) (- end-angle start-angle))]
-    (println "thickness" thickness)
+    ;(println "thickness" thickness)
     (clojure.string/join " " ["M" 3 -6
                               "L" 12 12
                               "L" -6 12

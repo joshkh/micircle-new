@@ -76,10 +76,4 @@
 (defn main []
   (let [complex-id (subscribe [:complex-id])]
     (fn []
-      [:div.container
-       [:h4 @complex-id]
-       [:div.row
-        [:div.col-sm-8
-         [svg]]
-        [:div.col-sm-4
-         [controls]]]])))
+      [svg])))
